@@ -7,3 +7,13 @@
 @use "../section/common/nav";
 
 // section
+@use "../section/dashboard/dashboard";
+@use "../section/distribution/distribution";
+@use "../section/extservice/extservice";
+@use "../section/home/home";
+@use "../section/loganalysis/loganalysis";
+@use "../section/login/login";
+@use "../section/mypage/mypage";
+@use "../section/notice/notice";
+@use "../section/review/review";
+@use "../section/signup/signup";
