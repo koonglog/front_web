@@ -8,6 +8,7 @@ import LogAnalysis from './pages/loganalysis/LogAnalysis';
 import Review from './pages/review/Review';
 import Notice from './pages/notice/Notice';
 import ExtService from './pages/extservice/ExtService';
+import MyPage from './pages/mypage/MyPage';
 
 const App = () => {
 	return (
@@ -20,6 +21,7 @@ const App = () => {
 				<Route path="review" element={<Review />} />
 				<Route path="notice" element={<Notice />} />
 				<Route path="external-service" element={<ExtService />} />
+				<Route path="mypage" element={<MyPage />} />
 			</Route>
 		</Routes>
 	);

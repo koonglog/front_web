@@ -73,7 +73,10 @@ const Nav = () => {
                     <div className="nav_alarm">
                         <img src={Alarm} alt="Alarm" />
                     </div>
-                    <div className="nav_user">김관리 관리자</div>  {/* 추후에 API에서 받아올 예정 */}
+                    <div
+                        className="nav_user"
+                        onClick={() => navigate('/mypage')}
+                    >김관리 관리자</div>  {/* 추후에 API에서 받아올 예정 */}
                 </div>
             </div>
             <div className="divider"></div>
