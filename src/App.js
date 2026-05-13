@@ -9,6 +9,7 @@ import Review from './pages/review/Review';
 import Notice from './pages/notice/Notice';
 import ExtService from './pages/extservice/ExtService';
 import MyPage from './pages/mypage/MyPage';
+import Monitoring from './pages/dashboard/Monitoring';
 
 const App = () => {
 	return (
@@ -16,6 +17,7 @@ const App = () => {
 			<Route path="/" element={<RootLayout />}>
 				<Route index element={<Home />} />
 				<Route path="dashboard" element={<Dashboard />} />
+				<Route path="dashboard/monitoring" element={<Monitoring />} />
 				<Route path="distribution" element={<Distribution />} />
 				<Route path="log-analysis" element={<LogAnalysis />} />
 				<Route path="review" element={<Review />} />

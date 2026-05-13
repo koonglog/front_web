@@ -10,8 +10,11 @@ import RedSound from "../../assets/img/ic_red_sound.png";
 import OrangeSound from "../../assets/img/ic_orange_sound.png";
 import Clock from "../../assets/img/ic_gray_clock.png";
 import Notice from "../../assets/img/ic_orange_warning.png";
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+
     return (
         <div className='Dashboard_Wrap'>
             <aside className='dashboard_aside'>
@@ -79,7 +82,10 @@ const Dashboard = () => {
             </aside>
             <main className="dashboard_main">
                 <div className="manage_info">
-                    <div className="monitoring">
+                    <div
+                        className="monitoring"
+                        onClick={() => navigate("monitoring")}
+                    >
                         <div className="icon">
                             <img src={HomeIcon} alt="HomeIcon" />
                         </div>
