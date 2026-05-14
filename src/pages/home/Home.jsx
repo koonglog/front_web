@@ -8,8 +8,11 @@ import Edit from "../../assets/img/ic_edit.png";
 import Network from "../../assets/img/ic_red_network.png";
 import Data from "../../assets/img/ic_green_data.png";
 import Check from "../../assets/img/ic_green_check.png";
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+    const navigate = useNavigate();
+
     const request_number = 3;
     const recent_notice_number = 5;
     const rate_number = 87;
@@ -27,7 +30,12 @@ const Home = () => {
                         <div className="icon">
                             <img src={Logo} alt="Logo" />
                         </div>
-                        <div className="goto_mediation">바로가기</div>
+                        <div
+                            className="goto_mediation"
+                            onClick={() => navigate("/review")}
+                        >
+                            바로가기
+                        </div>
                     </div>
                     <div className="title">미결재 중재 요청</div>
                     <div className="num">{request_number}건</div>
@@ -35,7 +43,10 @@ const Home = () => {
                 </div>
                 <div className="top_right">
                     <div className="manage_info_top">
-                        <div className="monitoring">
+                        <div
+                            className="monitoring"
+                            onClick={() => navigate("/dashboard/monitoring")}
+                        >
                             <div className="icon">
                                 <img src={HomeIcon} alt="HomeIcon" />
                             </div>
@@ -44,7 +55,10 @@ const Home = () => {
                                 <div className="description">{monitoring_number}</div>
                             </div>
                         </div>
-                        <div className="emergency">
+                        <div
+                            className="emergency"
+                            onClick={() => navigate("/dashboard/emergency")}
+                        >
                             <div className="icon">
                                 <img src={Warning} alt="Warning" />
                             </div>
@@ -55,7 +69,10 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="manage_info_bottom">
-                        <div className="today_total">
+                        <div
+                            className="today_total"
+                            onClick={() => navigate("/dashboard/todayTotal")}
+                        >
                             <div className="icon">
                                 <img src={Calendar} alt="Calendar" />
                             </div>
@@ -64,7 +81,10 @@ const Home = () => {
                                 <div className="description">{today_total_number}</div>
                             </div>
                         </div>
-                        <div className="finished_action">
+                        <div
+                            className="finished_action"
+                            onClick={() => navigate("/dashboard/finishedAdjust")}
+                        >
                             <div className="icon">
                                 <img src={Check} alt="Check" />
                             </div>
@@ -87,7 +107,10 @@ const Home = () => {
                             <div className="description">주민 앱 전송 및 수신 확인</div>  {/* TODO: 날짜는 오늘 날짜로 받아오기 */}
                         </div>
                     </div>
-                    <div className="title_right">
+                    <div
+                        className="title_right"
+                    // onClick={() => navigate("/notice/write")}
+                    >
                         <img src={Edit} alt="Edit" />
                         <div className="write_notice">공지 작성</div>
                     </div>
@@ -117,7 +140,12 @@ const Home = () => {
                             <div className="notice_title">야간 소음 자제 안내</div>  {/* TODO: 제목은 API 연동 */}
                             <div className="notice_date">2026.04.29 20:00 발송 · 확인율 92%</div>  {/* TODO: 날짜는 API 연동 */}
                         </div>
-                        <div className="notice_item_go">보기</div>
+                        <div
+                            className="notice_item_go"
+                        // onClick={() => navigate("/notice/detail")}
+                        >
+                            보기
+                        </div>
                     </div>
                 </div>
             </div>
