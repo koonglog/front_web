@@ -10,6 +10,7 @@ import Notice from './pages/notice/Notice';
 import ExtService from './pages/extservice/ExtService';
 import MyPage from './pages/mypage/MyPage';
 import Monitoring from './pages/dashboard/Monitoring';
+import Emergency from './pages/dashboard/Emergency';
 
 const App = () => {
 	return (
@@ -18,6 +19,7 @@ const App = () => {
 				<Route index element={<Home />} />
 				<Route path="dashboard" element={<Dashboard />} />
 				<Route path="dashboard/monitoring" element={<Monitoring />} />
+				<Route path="dashboard/emergency" element={<Emergency />} />
 				<Route path="distribution" element={<Distribution />} />
 				<Route path="log-analysis" element={<LogAnalysis />} />
 				<Route path="review" element={<Review />} />

@@ -94,7 +94,10 @@ const Dashboard = () => {
                             <div className="number">4</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
-                    <div className="emergency">
+                    <div
+                        className="emergency"
+                        onClick={() => navigate("emergency")}
+                    >
                         <div className="icon">
                             <img src={Warning} alt="Warning" />
                         </div>
