@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import MasterIcon from "../../assets/img/ic_master.png";
 import Check from "../../assets/img/ic_green_check.png";
 import Shield from "../../assets/img/ic_orange_shield.png";
 import Network from "../../assets/img/ic_blue_network.png";
@@ -6,10 +7,10 @@ import Wrench from "../../assets/img/ic_orange_wrench.png";
 import Setting from "../../assets/img/ic_purple_setting.png";
 import Goal from "../../assets/img/ic_orange_goal.png";
 import Alarm from "../../assets/img/ic_orange_alarm.png";
-import Key from "../../assets/img/ic_green_key.png";
-import Log from "../../assets/img/ic_gray_log.png";
 
 const MyPage = () => {
+    const [isAlarmBlocked, setIsAlarmBlocked] = useState(false);
+
     const userName = "김관리";
     const userJob = "관리소장";
     const location = "푸르지오 아파트 관리사무소";
@@ -30,7 +31,7 @@ const MyPage = () => {
                 <div className="user_info">
                     <div className="info_left">
                         <div className="profile">
-                            <img src="" alt="" />
+                            <img src={MasterIcon} alt="MasterIcon" />
                         </div>
                         <div className="user_name">{userName}</div>
                         <div className="user_job">{userJob}</div>
@@ -202,67 +203,27 @@ const MyPage = () => {
                             <label className="switch">
                                 <input
                                     type="checkbox"
+                                    checked={isAlarmBlocked}
+                                    onChange={(e) => setIsAlarmBlocked(e.target.checked)}
                                 />
                                 <span className="slider"></span>
                             </label>
                         </div>
                     </div>
-                    <div className="divider"></div>
-                    <div className="adjust_value">
-                        <div className="time_title">근무 시간 설정</div>
-                        <div className="time_adjust">
-                            <input type="text" name="startTimeThreshold" id="startTimeThreshold" />
-                            <div className="tilde">~</div>
-                            <input type="text" name="endTimeThreshold" id="endTimeThreshold" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="etc">
-                <div className="etc_title">
-                    <div className="icon">
-                        <img src={Key} alt="Key" />
-                    </div>
-                    <div className="text">
-                        <div className="title">외부 서비스 연계 관리</div>
-                        <div className="caption">API 연동 상태 및 인증 키 관리</div>
-                    </div>
-                </div>
-                <div className="list_item">
-                    <div className="item_left">
-                        <div className="icon">
-                            <img src={Check} alt="Check" />
-                        </div>
-                        <div className="text">
-                            <div className="name">층간소음 이웃사이센터</div>
-                            <div className="description">국가소음정보센터 API</div>
-                        </div>
-                    </div>
-                    <div className="item_right">정상</div>
-                </div>
-                <div className="list_item">
-                    <div className="item_left">
-                        <div className="icon">
-                            <img src={Check} alt="Check" />
-                        </div>
-                        <div className="text">
-                            <div className="name">공공기관 상담 센터</div>
-                            <div className="description">1661-2642 연계 시스템</div>
-                        </div>
-                    </div>
-                    <div className="item_right">정상</div>
-                </div>
-                <div className="list_item_adjust">
-                    <div className="item_left">
-                        <div className="icon">
-                            <img src={Log} alt="Log" />
-                        </div>
-                        <div className="text">
-                            <div className="name">클라우드 백업 서비스</div>
-                            <div className="description">AWS S3 연동</div>
-                        </div>
-                    </div>
-                    <div className="item_right">키 갱신</div>
+
+                    {isAlarmBlocked && (
+                        <>
+                            <div className="divider"></div>
+                            <div className="adjust_value">
+                                <div className="time_title">근무 시간 설정</div>
+                                <div className="time_adjust">
+                                    <input type="text" name="startTimeThreshold" id="startTimeThreshold" />
+                                    <div className="tilde">~</div>
+                                    <input type="text" name="endTimeThreshold" id="endTimeThreshold" />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

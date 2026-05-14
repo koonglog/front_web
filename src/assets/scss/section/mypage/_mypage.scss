@@ -51,11 +51,17 @@
                 padding: 24px;
 
                 .profile {
-                    width: 80px;
-                    height: 80px;
+                    width: 32px;
+                    height: 32px;
                     border-radius: 50%;
                     background-color: var(--white);
-                    padding: 20px;
+                    padding: 16px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                    }
                 }
 
                 .user_name {
@@ -710,163 +716,6 @@
                         color: var(--lightblack);
                     }
                 }
-            }
-        }
-    }
-
-    .etc {
-        display: flex;
-        flex-direction: column;
-        padding: 25px;
-        background-color: var(--white);
-        border-radius: 16px;
-        border: 1px solid var(--designgray);
-        gap: 24px;
-
-        .etc_title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            .icon {
-                width: 48px;
-                height: 48px;
-                background-color: var(--lightgreen);
-                border-radius: 12px;
-                padding: 12px;
-
-                img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                }
-            }
-
-            .text {
-                display: flex;
-                flex-direction: column;
-
-                .title {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: var(--black);
-                }
-
-                .caption {
-                    font-size: 14px;
-                    font-weight: 400;
-                    color: var(--lightblack);
-                }
-            }
-        }
-
-        .list_item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background-color: var(--whitegreen);
-            border-radius: 12px;
-            border: 1px solid #B9F8CF;
-
-            .item_left {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                .icon {
-                    width: 24px;
-                    height: 24px;
-
-                    img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain;
-                    }
-                }
-
-                .text {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-
-                    .name {
-                        font-size: 16px;
-                        font-weight: 600;
-                        color: var(--black);
-                    }
-
-                    .description {
-                        font-size: 12px;
-                        font-weight: 400;
-                        color: var(--lightblack);
-                    }
-                }
-            }
-
-            .item_right {
-                padding: 5px 12px;
-                background-color: var(--green);
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--white);
-            }
-        }
-
-        .list_item_adjust {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background-color: #F9FAFB;
-            border-radius: 12px;
-            border: 1px solid var(--designgray);
-
-            .item_left {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                .icon {
-                    width: 24px;
-                    height: 24px;
-
-                    img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain;
-                    }
-                }
-
-                .text {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-
-                    .name {
-                        font-size: 16px;
-                        font-weight: 600;
-                        color: var(--black);
-                    }
-
-                    .description {
-                        font-size: 12px;
-                        font-weight: 400;
-                        color: var(--lightblack);
-                    }
-                }
-            }
-
-            .item_right {
-                padding: 5px 12px;
-                background-color: var(--white);
-                border-radius: 8px;
-                border: 1px solid var(--designgray);
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--black);
-                cursor: pointer;
             }
         }
     }
