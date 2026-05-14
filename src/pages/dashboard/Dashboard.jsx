@@ -118,7 +118,10 @@ const Dashboard = () => {
                             <div className="number">21</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
-                    <div className="finished_adjust">
+                    <div
+                        className="finished_adjust"
+                        onClick={() => navigate("finishedAdjust")}
+                    >
                         <div className="icon">
                             <img src={Check} alt="Check" />
                         </div>
