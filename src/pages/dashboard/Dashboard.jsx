@@ -106,7 +106,10 @@ const Dashboard = () => {
                             <div className="number">2</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
-                    <div className="today_total">
+                    <div
+                        className="today_total"
+                        onClick={() => navigate("todayTotal")}
+                    >
                         <div className="icon">
                             <img src={Calendar} alt="Calendar" />
                         </div>

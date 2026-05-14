@@ -11,6 +11,7 @@ import ExtService from './pages/extservice/ExtService';
 import MyPage from './pages/mypage/MyPage';
 import Monitoring from './pages/dashboard/Monitoring';
 import Emergency from './pages/dashboard/Emergency';
+import TodayTotal from './pages/dashboard/TodayTotal';
 
 const App = () => {
 	return (
@@ -20,6 +21,7 @@ const App = () => {
 				<Route path="dashboard" element={<Dashboard />} />
 				<Route path="dashboard/monitoring" element={<Monitoring />} />
 				<Route path="dashboard/emergency" element={<Emergency />} />
+				<Route path="dashboard/todayTotal" element={<TodayTotal />} />
 				<Route path="distribution" element={<Distribution />} />
 				<Route path="log-analysis" element={<LogAnalysis />} />
 				<Route path="review" element={<Review />} />
