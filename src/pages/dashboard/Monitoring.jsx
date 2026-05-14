@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import BackIcon from "../../assets/img/ic_back.png";
 import Filter from "../../assets/img/ic_gray_filter.png";
-import Download from "../../assets/img/ic_white_download.png";
 import Message from "../../assets/img/ic_green_message.png";
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
+import { useNavigate } from 'react-router-dom';
 
 const Monitoring = () => {
+    const navigate = useNavigate();
+
     const households = [
         { house: "A동 304호", statusClass: "badge_high", status: "즉시 대응 필요", name: "김철수", phone: "010-1234-5678", today: "7건", high: "3건", time: "23:34" },
         { house: "A동 502호", statusClass: "badge_normal", status: "관찰 필요", name: "이영희", phone: "010-2345-6789", today: "4건", high: "1건", time: "21:15" },
@@ -20,7 +22,10 @@ const Monitoring = () => {
             <div className="monitoring_box">
                 <div className="monitoring_top">
                     <div className="monitoring_left">
-                        <div className="back_icon">
+                        <div
+                            className="back_icon"
+                            onClick={() => navigate(-1)}
+                        >
                             <img src={BackIcon} alt="BackIcon" />
                         </div>
                         <div className="monitoring_text">
