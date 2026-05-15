@@ -105,7 +105,7 @@
                             background-color: #F59E0B !important;
                         }
 
-                        .circle.circle_normal {
+                        .circle.circle_low {
                             background-color: var(--green) !important;
                         }
                     }
@@ -177,7 +177,7 @@
                             background-color: #F59E0B !important;
                         }
 
-                        .circle.circle_normal {
+                        .circle.circle_low {
                             background-color: var(--green) !important;
                         }
                     }
@@ -498,7 +498,7 @@
                         }
                     }
 
-                    .normal {
+                    .low {
                         display: flex;
                         align-items: center;
                         gap: 8px;
@@ -727,7 +727,7 @@
                             color: var(--white);
                         }
 
-                        .badge.badge_normal {
+                        .badge.badge_low {
                             background-color: var(--green);
                             color: var(--white);
                         }
@@ -1228,7 +1228,7 @@
                         color: var(--white);
                     }
 
-                    td.badge_normal {
+                    td.badge_low {
                         display: flex;
                         width: fit-content;
                         margin: 12px 16px;

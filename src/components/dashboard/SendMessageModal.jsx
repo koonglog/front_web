@@ -1,6 +1,7 @@
 import React from 'react';
 import Cancel from "../../assets/img/ic_gray_cancel.png";
 import Send from "../../assets/img/ic_white_send.png";
+import { messageTypes } from "../../mocks/dashboardData";
 
 const SendMessageModal = ({ receiverHouse, receiverName, onClose }) => {
     return (
@@ -19,10 +20,11 @@ const SendMessageModal = ({ receiverHouse, receiverName, onClose }) => {
                 <div className="message_type">
                     <div className="title">메시지 유형</div>
                     <div className="type_lists">
-                        <div className="type_item">긴급 알림</div>
-                        <div className="type_item">일반 안내</div>
-                        <div className="type_item">생활 에티켓</div>
-                        <div className="type_item">점검 안내</div>
+                        {messageTypes.map((type) => (
+                            <div className="type_item" key={type}>
+                                {type}
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="message_title">

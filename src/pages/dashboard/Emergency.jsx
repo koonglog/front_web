@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Back from "../../assets/img/ic_back.png";
+import { households } from "../../mocks/dashboardData";
 import Warning from "../../assets/img/ic_white_warning.png";
 import Message from "../../assets/img/ic_green_message.png";
 import { useNavigate } from 'react-router-dom';
@@ -8,30 +9,9 @@ import SendMessageModal from '../../components/dashboard/SendMessageModal';
 const Emergency = () => {
     const navigate = useNavigate();
 
-    const households = [
-        {
-            house: "A동 304호",
-            statusClass: "badge_high",
-            status: "즉시 대응 필요",
-            name: "김철수",
-            phone: "010-1234-5678",
-            today: "7건",
-            high: "3건",
-            averageDuration: "12분",
-            time: "23:34",
-        },
-        {
-            house: "A동 705호",
-            statusClass: "badge_high",
-            status: "즉시 대응 필요",
-            name: "정수연",
-            phone: "010-4567-8901",
-            today: "8건",
-            high: "4건",
-            averageDuration: "15분",
-            time: "00:12",
-        },
-    ];
+    const emergencyHouseholds = households.filter(
+        (item) => item.status === "즉시 대응 필요"
+    );
 
     const [completedButtons, setCompletedButtons] = useState({});
     const [selectedHousehold, setSelectedHousehold] = useState(null);
@@ -58,11 +38,11 @@ const Emergency = () => {
                     </div>
                     <div className="title_text">
                         <div className="title">긴급 대응 필요 세대</div>
-                        <div className="caption">즉시 조치가 필요한 {households.length}개 세대 (오늘 7건 이상 또는 고강도 3건 이상)</div>
+                        <div className="caption">즉시 조치가 필요한 {emergencyHouseholds.length}개 세대 (오늘 7건 이상 또는 고강도 3건 이상)</div>
                     </div>
                 </div>
                 <div className="emergency_contents">
-                    {households.map((item) => {
+                    {emergencyHouseholds.map((item) => {
                         const isConsultDone = completedButtons[item.house]?.consultation;
                         const isReservationDone = completedButtons[item.house]?.reservation;
 

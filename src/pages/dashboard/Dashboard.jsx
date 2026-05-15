@@ -6,9 +6,11 @@ import Calendar from "../../assets/img/ic_orange_calendar.png";
 import Check from "../../assets/img/ic_green_check.png";
 import Filter from "../../assets/img/ic_gray_filter.png";
 import Message from "../../assets/img/ic_green_message.png";
-import RedSound from "../../assets/img/ic_red_sound.png";
-import OrangeSound from "../../assets/img/ic_orange_sound.png";
-import BlueSound from "../../assets/img/ic_blue_sound.png";
+import {
+    households,
+    feedItems,
+    dashboardSummary,
+} from "../../mocks/dashboardData";
 import Clock from "../../assets/img/ic_gray_clock.png";
 import Notice from "../../assets/img/ic_orange_warning.png";
 import { useNavigate } from 'react-router-dom';
@@ -16,131 +18,6 @@ import SendMessageModal from '../../components/dashboard/SendMessageModal';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-
-    const households = [
-        {
-            house: "A동 304호",
-            status: "즉시 대응 필요",
-            statusClass: "badge_high",
-            circleClass: "circle_high",
-            name: "김철수",
-            phone: "010-1234-5678",
-            time: "23:34",
-            today: "7건",
-            high: "3건",
-            averageDuration: "12분",
-            recentEvent: "23:34",
-            events: [
-                {
-                    type: "반복 충격음",
-                    from: "위층",
-                    intensity: "강도 강",
-                    intensityClass: "red",
-                    icon: RedSound,
-                    iconClass: "icon_red",
-                    timeRange: "23:20 ~ 23:34",
-                    duration: "14분",
-                    repeat: "7회",
-                },
-                {
-                    type: "끄는 소리",
-                    from: "위층",
-                    intensity: "강도 중",
-                    intensityClass: "orange",
-                    icon: OrangeSound,
-                    iconClass: "icon_orange",
-                    timeRange: "22:45 ~ 22:52",
-                    duration: "7분",
-                    repeat: "3회",
-                },
-            ],
-        },
-        {
-            house: "A동 502호",
-            status: "관찰 필요",
-            statusClass: "badge_medium",
-            circleClass: "circle_medium",
-            name: "이영희",
-            phone: "010-2345-6789",
-            time: "21:15",
-            today: "4건",
-            high: "1건",
-            averageDuration: "5분",
-            recentEvent: "21:15",
-            events: [
-                {
-                    type: "충격음",
-                    from: "위층",
-                    intensity: "강도 중",
-                    intensityClass: "orange",
-                    icon: OrangeSound,
-                    iconClass: "icon_orange",
-                    timeRange: "21:10 ~ 21:15",
-                    duration: "5분",
-                    repeat: "2회",
-                },
-            ],
-        },
-        {
-            house: "B동 1208호",
-            status: "정상",
-            statusClass: "badge_normal",
-            circleClass: "circle_normal",
-            name: "박민수",
-            phone: "010-3456-7890",
-            time: "19:30",
-            today: "2건",
-            high: "0건",
-            averageDuration: "3분",
-            recentEvent: "19:30",
-            events: [
-                {
-                    type: "충격음",
-                    from: "위층",
-                    intensity: "강도 약",
-                    intensityClass: "green",
-                    icon: BlueSound,
-                    iconClass: "icon_green",
-                    timeRange: "19:27 ~ 19:30",
-                    duration: "3분",
-                    repeat: "1회",
-                },
-            ],
-        },
-        {
-            house: "A동 705호",
-            status: "즉시 대응 필요",
-            statusClass: "badge_high",
-            circleClass: "circle_high",
-            name: "정수연",
-            phone: "010-4567-8901",
-            time: "00:12",
-            today: "8건",
-            high: "4건",
-            averageDuration: "15분",
-            recentEvent: "00:12",
-            events: [
-                {
-                    type: "끄는 소리",
-                    from: "위층",
-                    intensity: "강도 강",
-                    intensityClass: "red",
-                    icon: RedSound,
-                    iconClass: "icon_red",
-                    timeRange: "23:57 ~ 00:12",
-                    duration: "15분",
-                    repeat: "6회",
-                },
-            ],
-        },
-    ];
-
-    const feedItems = [
-        { icon: RedSound, iconClass: "icon_red", house: "A동 304호", issue: "반복 충격음", detail: "23:34 · 14분" },
-        { icon: RedSound, iconClass: "icon_red", house: "A동 705호", issue: "끄는 소리", detail: "23:15 · 18분" },
-        { icon: OrangeSound, iconClass: "icon_orange", house: "A동 304호", issue: "끄는 소리", detail: "22:45 · 7분" },
-        { icon: OrangeSound, iconClass: "icon_orange", house: "A동 502호", issue: "충격음", detail: "21:15 · 5분" },
-    ];
 
     const [selectedHousehold, setSelectedHousehold] = useState(households[0]);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
@@ -190,7 +67,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">모니터링 세대</div>
-                            <div className="number">4</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{dashboardSummary.monitoring}</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
                     <div
@@ -202,7 +79,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">긴급 대응 필요</div>
-                            <div className="number">2</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{dashboardSummary.emergency}</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
                     <div
@@ -214,7 +91,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">오늘 발생 소음 총합</div>
-                            <div className="number">21</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{dashboardSummary.todayTotal}</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
                     <div
@@ -226,7 +103,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">조치 완료</div>
-                            <div className="number">3</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{dashboardSummary.finishedAdjust}</div>  {/* 추후 API 연결 예정 */}
                         </div>
                     </div>
                 </div>
@@ -252,7 +129,7 @@ const Dashboard = () => {
                                 <div className="circle"></div>
                                 <div className="text">관찰</div>
                             </div>
-                            <div className="normal">
+                            <div className="low">
                                 <div className="circle"></div>
                                 <div className="text">정상</div>
                             </div>

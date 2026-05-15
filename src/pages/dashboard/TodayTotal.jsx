@@ -1,5 +1,6 @@
 import React from 'react';
 import Back from "../../assets/img/ic_back.png";
+import { households } from "../../mocks/dashboardData";
 import Filter from "../../assets/img/ic_gray_filter.png";
 import Clock from "../../assets/img/ic_gray_clock.png";
 import RedSound from "../../assets/img/ic_red_sound.png";
@@ -10,80 +11,22 @@ import { useNavigate } from 'react-router-dom';
 const TodayTotal = () => {
     const navigate = useNavigate();
 
-    const households = [
-        {
-            house: "A동 304호",
-            statusClass: "badge_high",
-            status: "고강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "14분",
-            time: "23:34",
-            issue: "반복 충격음",
-        },
-        {
-            house: "A동 705호",
-            statusClass: "badge_high",
-            status: "고강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "18분",
-            time: "23:15",
-            issue: "기능 소리",
-        },
-        {
-            house: "A동 304호",
-            statusClass: "badge_medium",
-            status: "중강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "7분",
-            time: "22:45",
-            issue: "끄는 소리",
-        },
-        {
-            house: "A동 502호",
-            statusClass: "badge_medium",
-            status: "중강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "5분",
-            time: "21:15",
-            issue: "충격음",
-        },
-        {
-            house: "B동 1208호",
-            statusClass: "badge_low",
-            status: "저강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "3분",
-            time: "19:30",
-            issue: "충격음",
-        },
-        {
-            house: "A동 705호",
-            statusClass: "badge_high",
-            status: "고강도",
-            name: "",
-            phone: "",
-            today: "",
-            high: "",
-            averageDuration: "12분",
-            time: "22:50",
-            issue: "반복 충격음",
-        },
-    ];
+    const todayTotalItems = households.flatMap((household) =>
+        household.events.map((event) => ({
+            house: household.house,
+            statusClass: household.statusClass,
+            status:
+                household.statusClass === "badge_high"
+                    ? "고강도"
+                    : household.statusClass === "badge_medium"
+                        ? "중강도"
+                        : "저강도",
+
+            averageDuration: event.duration,
+            time: event.timeRange.split("~")[1].trim(),
+            issue: event.type,
+        }))
+    );
 
     const soundIconMap = {
         badge_high: RedSound,
@@ -104,7 +47,7 @@ const TodayTotal = () => {
                         </div>
                         <div className="title_text">
                             <div className="title">오늘 발생 소음 종합</div>
-                            <div className="caption">시간순 정렬 · 총 6건 (2026.04.30)</div>
+                            <div className="caption">시간순 정렬 · 총 {todayTotalItems.length}건 (2026.04.30)</div>
                         </div>
                     </div>
                     <div className="title_right">
@@ -115,7 +58,7 @@ const TodayTotal = () => {
                     </div>
                 </div>
                 <div className="today_total_contents">
-                    {households.map((item) => {
+                    {todayTotalItems.map((item) => {
                         return (
                             <div className="list_item">
                                 <div className={`icon ${item.statusClass}`}>

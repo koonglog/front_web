@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BackIcon from "../../assets/img/ic_back.png";
+import { households } from "../../mocks/dashboardData";
 import Filter from "../../assets/img/ic_gray_filter.png";
 import Message from "../../assets/img/ic_green_message.png";
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
@@ -7,13 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Monitoring = () => {
     const navigate = useNavigate();
-
-    const households = [
-        { house: "A동 304호", statusClass: "badge_high", status: "즉시 대응 필요", name: "김철수", phone: "010-1234-5678", today: "7건", high: "3건", time: "23:34" },
-        { house: "A동 502호", statusClass: "badge_normal", status: "관찰 필요", name: "이영희", phone: "010-2345-6789", today: "4건", high: "1건", time: "21:15" },
-        { house: "B동 1208호", statusClass: "badge_low", status: "정상", name: "박민수", phone: "010-3456-7890", today: "2건", high: "0건", time: "19:30" },
-        { house: "A동 705호", statusClass: "badge_high", status: "즉시 대응 필요", name: "정수연", phone: "010-4567-8901", today: "8건", high: "4건", time: "00:12" },
-    ];
 
     const [selectedHousehold, setSelectedHousehold] = useState(null);
 
