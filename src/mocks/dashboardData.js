@@ -9,149 +9,150 @@ export const dashboardSummary = {
     finishedAdjust: 3,
 };
 
-export const households = [
-    {
-        house: "A동 304호",
-        status: "즉시 대응 필요",
-        statusClass: "badge_high",
-        circleClass: "circle_high",
+export const
+    households = [
+        {
+            house: "A동 304호",
+            status: "즉시 대응 필요",
+            statusClass: "badge_high",
+            circleClass: "circle_high",
 
-        name: "김철수",
-        phone: "010-1234-5678",
+            name: "김철수",
+            phone: "010-1234-5678",
 
-        today: "7건",
-        high: "3건",
-        averageDuration: "12분",
-        time: "23:34",
-        recentEvent: "23:34",
+            today: "7건",
+            high: "3건",
+            averageDuration: "12분",
+            time: "23:34",
+            recentEvent: "23:34",
 
-        events: [
-            {
-                type: "반복 충격음",
-                from: "위층",
-                intensity: "강도 강",
-                intensityClass: "red",
+            events: [
+                {
+                    type: "반복 충격음",
+                    from: "위층",
+                    intensity: "강도 강",
+                    intensityClass: "red",
 
-                icon: RedSound,
-                iconClass: "icon_red",
+                    icon: RedSound,
+                    iconClass: "icon_red",
 
-                timeRange: "23:20 ~ 23:34",
-                duration: "14분",
-                repeat: "7회",
-            },
+                    timeRange: "23:20 ~ 23:34",
+                    duration: "14분",
+                    repeat: "7회",
+                },
 
-            {
-                type: "끄는 소리",
-                from: "위층",
-                intensity: "강도 중",
-                intensityClass: "orange",
+                {
+                    type: "끄는 소리",
+                    from: "위층",
+                    intensity: "강도 중",
+                    intensityClass: "orange",
 
-                icon: OrangeSound,
-                iconClass: "icon_orange",
+                    icon: OrangeSound,
+                    iconClass: "icon_orange",
 
-                timeRange: "22:45 ~ 22:52",
-                duration: "7분",
-                repeat: "3회",
-            },
-        ],
-    },
+                    timeRange: "22:45 ~ 22:52",
+                    duration: "7분",
+                    repeat: "3회",
+                },
+            ],
+        },
 
-    {
-        house: "A동 502호",
-        status: "관찰 필요",
-        statusClass: "badge_medium",
-        circleClass: "circle_medium",
+        {
+            house: "A동 502호",
+            status: "관찰 필요",
+            statusClass: "badge_middle",
+            circleClass: "circle_middle",
 
-        name: "이영희",
-        phone: "010-2345-6789",
+            name: "이영희",
+            phone: "010-2345-6789",
 
-        today: "4건",
-        high: "1건",
-        averageDuration: "5분",
-        time: "21:15",
-        recentEvent: "21:15",
+            today: "4건",
+            high: "1건",
+            averageDuration: "5분",
+            time: "21:15",
+            recentEvent: "21:15",
 
-        events: [
-            {
-                type: "충격음",
-                from: "위층",
-                intensity: "강도 중",
-                intensityClass: "orange",
+            events: [
+                {
+                    type: "충격음",
+                    from: "위층",
+                    intensity: "강도 중",
+                    intensityClass: "orange",
 
-                icon: OrangeSound,
-                iconClass: "icon_orange",
+                    icon: OrangeSound,
+                    iconClass: "icon_orange",
 
-                timeRange: "21:10 ~ 21:15",
-                duration: "5분",
-                repeat: "2회",
-            },
-        ],
-    },
+                    timeRange: "21:10 ~ 21:15",
+                    duration: "5분",
+                    repeat: "2회",
+                },
+            ],
+        },
 
-    {
-        house: "B동 1208호",
-        status: "정상",
-        statusClass: "badge_low",
-        circleClass: "circle_low",
+        {
+            house: "B동 1208호",
+            status: "정상",
+            statusClass: "badge_low",
+            circleClass: "circle_low",
 
-        name: "박민수",
-        phone: "010-3456-7890",
+            name: "박민수",
+            phone: "010-3456-7890",
 
-        today: "2건",
-        high: "0건",
-        averageDuration: "3분",
-        time: "19:30",
-        recentEvent: "19:30",
+            today: "2건",
+            high: "0건",
+            averageDuration: "3분",
+            time: "19:30",
+            recentEvent: "19:30",
 
-        events: [
-            {
-                type: "충격음",
-                from: "위층",
-                intensity: "강도 약",
-                intensityClass: "green",
+            events: [
+                {
+                    type: "충격음",
+                    from: "위층",
+                    intensity: "강도 약",
+                    intensityClass: "green",
 
-                icon: BlueSound,
-                iconClass: "icon_green",
+                    icon: BlueSound,
+                    iconClass: "icon_green",
 
-                timeRange: "19:27 ~ 19:30",
-                duration: "3분",
-                repeat: "1회",
-            },
-        ],
-    },
+                    timeRange: "19:27 ~ 19:30",
+                    duration: "3분",
+                    repeat: "1회",
+                },
+            ],
+        },
 
-    {
-        house: "A동 705호",
-        status: "즉시 대응 필요",
-        statusClass: "badge_high",
-        circleClass: "circle_high",
+        {
+            house: "A동 705호",
+            status: "즉시 대응 필요",
+            statusClass: "badge_high",
+            circleClass: "circle_high",
 
-        name: "정수연",
-        phone: "010-4567-8901",
+            name: "정수연",
+            phone: "010-4567-8901",
 
-        today: "8건",
-        high: "4건",
-        averageDuration: "15분",
-        time: "00:12",
-        recentEvent: "00:12",
+            today: "8건",
+            high: "4건",
+            averageDuration: "15분",
+            time: "00:12",
+            recentEvent: "00:12",
 
-        events: [
-            {
-                type: "끄는 소리",
-                from: "위층",
-                intensity: "강도 강",
-                intensityClass: "red",
+            events: [
+                {
+                    type: "끄는 소리",
+                    from: "위층",
+                    intensity: "강도 강",
+                    intensityClass: "red",
 
-                icon: RedSound,
-                iconClass: "icon_red",
+                    icon: RedSound,
+                    iconClass: "icon_red",
 
-                timeRange: "23:57 ~ 00:12",
-                duration: "15분",
-                repeat: "6회",
-            },
-        ],
-    },
-];
+                    timeRange: "23:57 ~ 00:12",
+                    duration: "15분",
+                    repeat: "6회",
+                },
+            ],
+        },
+    ];
 
 export const feedItems = [
     {

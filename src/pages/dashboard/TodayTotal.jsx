@@ -18,7 +18,7 @@ const TodayTotal = () => {
             status:
                 household.statusClass === "badge_high"
                     ? "고강도"
-                    : household.statusClass === "badge_medium"
+                    : household.statusClass === "badge_middle"
                         ? "중강도"
                         : "저강도",
 
@@ -30,7 +30,7 @@ const TodayTotal = () => {
 
     const soundIconMap = {
         badge_high: RedSound,
-        badge_medium: OrangeSound,
+        badge_middle: OrangeSound,
         badge_low: BlueSound,
     };
 
