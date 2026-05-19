@@ -13,6 +13,8 @@ import Monitoring from './pages/dashboard/Monitoring';
 import Emergency from './pages/dashboard/Emergency';
 import TodayTotal from './pages/dashboard/TodayTotal';
 import FinishedAdjust from './pages/dashboard/FinishedAdjust';
+import NoticeWrite from './pages/notice/NoticeWrite';
+import NoticeDetail from './pages/notice/NoticeDetail';
 
 const App = () => {
 	return (
@@ -28,6 +30,8 @@ const App = () => {
 				<Route path="log-analysis" element={<LogAnalysis />} />
 				<Route path="review" element={<Review />} />
 				<Route path="notice" element={<Notice />} />
+				<Route path="notice/write" element={<NoticeWrite />} />
+				<Route path="notice/:noticeId" element={<NoticeDetail />} />
 				<Route path="external-service" element={<ExtService />} />
 				<Route path="mypage" element={<MyPage />} />
 			</Route>

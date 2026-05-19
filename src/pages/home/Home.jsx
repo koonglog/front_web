@@ -8,6 +8,7 @@ import Edit from "../../assets/img/ic_edit.png";
 import Network from "../../assets/img/ic_red_network.png";
 import Data from "../../assets/img/ic_green_data.png";
 import Check from "../../assets/img/ic_green_check.png";
+import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -21,6 +22,8 @@ const Home = () => {
     const emergency_number = 2;
     const today_total_number = 21;
     const finished_action_number = 3;
+
+    const recentNotice = noticeItems[0];
 
     return (
         <div className='Home_Wrap'>
@@ -109,7 +112,7 @@ const Home = () => {
                     </div>
                     <div
                         className="title_right"
-                    // onClick={() => navigate("/notice/write")}
+                        onClick={() => navigate("/notice/write")}
                     >
                         <img src={Edit} alt="Edit" />
                         <div className="write_notice">공지 작성</div>
@@ -137,12 +140,12 @@ const Home = () => {
                     <div className="recent_title">최근 발송 공지</div>
                     <div className="notice_item">
                         <div className="notice_item_info">
-                            <div className="notice_title">야간 소음 자제 안내</div>  {/* TODO: 제목은 API 연동 */}
-                            <div className="notice_date">2026.04.29 20:00 발송 · 확인율 92%</div>  {/* TODO: 날짜는 API 연동 */}
+                            <div className="notice_title">{recentNotice.title}</div>
+                            <div className="notice_date">{recentNotice.sentAt} 발송 · 확인율 {recentNotice.readRate}%</div>
                         </div>
                         <div
                             className="notice_item_go"
-                        // onClick={() => navigate("/notice/detail")}
+                            onClick={() => navigate(`/notice/${recentNotice.id}`)}
                         >
                             보기
                         </div>
