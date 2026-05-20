@@ -1,1 +1,146 @@
-.Distribution_Wrap {}
+.Distribution_Wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 24px 32px;
+
+    .distribution_box {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--white);
+        border-radius: 16px;
+        border: 1px solid var(--designgray);
+        padding: 25px;
+        gap: 24px;
+
+        .distribution_title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .title_text {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                .title {
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: var(--black);
+                }
+
+                .caption {
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: var(--lightblack);
+                }
+            }
+
+            .export_btn {
+                display: flex;
+                align-items: center;
+                background-color: var(--white);
+                border-radius: 10px;
+                border: 1px solid var(--lightgray);
+                padding: 9px 18px;
+                gap: 10px;
+                cursor: pointer;
+
+                .icon {
+                    width: 16px;
+                    height: 16px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                    }
+                }
+
+                .text {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: var(--black);
+                }
+            }
+        }
+
+        .distribution_map {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--black);
+            text-align: center;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background-color: var(--designgray);
+        }
+
+        .map_description {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+
+            .high {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .box {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 4px;
+                    background-color: var(--highlight);
+                }
+
+                .text {
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: var(--lightblack);
+                }
+            }
+
+            .middle {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .box {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 4px;
+                    background-color: var(--subcolor);
+                }
+
+                .text {
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: var(--lightblack);
+                }
+            }
+
+            .low {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .box {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 4px;
+                    background-color: var(--white);
+                    border: 2px solid var(--designgray);
+                }
+
+                .text {
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: var(--lightblack);
+                }
+            }
+        }
+    }
+}
