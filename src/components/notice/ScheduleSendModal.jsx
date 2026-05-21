@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Close from "../../assets/img/ic_gray_cancel.png";
-import Send from "../../assets/img/ic_white_send.png";
+import Close from "../../assets/img/ic_gray_cancel.svg";
+import Send from "../../assets/img/ic_white_send.svg";
 
 const ScheduleSendModal = ({ onClose, onScheduleSend }) => {
     const [selectedTime, setSelectedTime] = useState("");

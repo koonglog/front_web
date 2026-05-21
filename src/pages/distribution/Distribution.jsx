@@ -1,5 +1,5 @@
 import React from 'react';
-import Download from "../../assets/img/ic_gray_download.png";
+import Download from "../../assets/img/ic_gray_download.svg";
 
 const Distribution = () => {
     return (

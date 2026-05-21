@@ -1,6 +1,6 @@
-import RedSound from "../assets/img/ic_red_sound.png";
-import OrangeSound from "../assets/img/ic_orange_sound.png";
-import BlueSound from "../assets/img/ic_blue_sound.png";
+import RedSound from "../assets/img/ic_red_sound.svg";
+import OrangeSound from "../assets/img/ic_orange_sound.svg";
+import BlueSound from "../assets/img/ic_blue_sound.svg";
 
 export const dashboardSummary = {
     monitoring: 4,

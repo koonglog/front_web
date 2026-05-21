@@ -1,7 +1,7 @@
 import React from 'react';
 import { aiTemplates } from "../../mocks/noticeData.js";
-import Close from "../../assets/img/ic_gray_cancel.png";
-import Docs from "../../assets/img/ic_orange_docs.png";
+import Close from "../../assets/img/ic_gray_cancel.svg";
+import Docs from "../../assets/img/ic_orange_docs.svg";
 
 const AiTemplateModal = ({ onClose, onApplyTemplate }) => {
     const getTemplateTypeClass = (type) => {

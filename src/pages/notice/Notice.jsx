@@ -1,9 +1,9 @@
 import React from 'react';
 import { noticeSummary, noticeItems } from "../../mocks/noticeData";
-import Write from "../../assets/img/ic_white_write.png";
-import Calendar from "../../assets/img/ic_gray_calendar.png";
-import People from "../../assets/img/ic_gray_people.png";
-import Eye from "../../assets/img/ic_gray_eye.png";
+import Write from "../../assets/img/ic_white_edit.svg";
+import Calendar from "../../assets/img/ic_gray_calendar.svg";
+import People from "../../assets/img/ic_gray_people.svg";
+import Eye from "../../assets/img/ic_gray_eye.svg";
 import { useNavigate } from 'react-router-dom';
 
 const Notice = () => {

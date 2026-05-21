@@ -1,11 +1,11 @@
 import React from 'react';
-import Back from "../../assets/img/ic_back.png";
+import Back from "../../assets/img/ic_gray_back.svg";
 import { households } from "../../mocks/dashboardData";
-import Filter from "../../assets/img/ic_gray_filter.png";
-import Clock from "../../assets/img/ic_gray_clock.png";
-import RedSound from "../../assets/img/ic_red_sound.png";
-import OrangeSound from "../../assets/img/ic_orange_sound.png";
-import BlueSound from "../../assets/img/ic_blue_sound.png";
+import Filter from "../../assets/img/ic_gray_filter.svg";
+import Clock from "../../assets/img/ic_gray_clock.svg";
+import RedSound from "../../assets/img/ic_red_sound.svg";
+import OrangeSound from "../../assets/img/ic_orange_sound.svg";
+import BlueSound from "../../assets/img/ic_blue_sound.svg";
 import { useNavigate } from 'react-router-dom';
 
 const TodayTotal = () => {

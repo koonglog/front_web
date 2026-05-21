@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { mediationReviewItems } from "../../mocks/reviewData";
-import OrangePeople from "../../assets/img/ic_orange_people.png";
-import GreenPeople from "../../assets/img/ic_green_people.png";
-import Message from "../../assets/img/ic_gray_message.png";
-import GreenSend from "../../assets/img/ic_green_send.png";
-import Calendar from "../../assets/img/ic_gray_calendar.png";
-import WhiteCheck from "../../assets/img/ic_white_check.png";
-import GreenCheck from "../../assets/img/ic_green_check.png";
-import Clock from "../../assets/img/ic_gray_clock.png";
+import OrangePeople from "../../assets/img/ic_orange_people.svg";
+import GreenPeople from "../../assets/img/ic_green_people.svg";
+import Message from "../../assets/img/ic_gray_message.svg";
+import GreenSend from "../../assets/img/ic_green_send.svg";
+import Calendar from "../../assets/img/ic_gray_calendar.svg";
+import WhiteCheck from "../../assets/img/ic_white_check.svg";
+import GreenCheck from "../../assets/img/ic_green_check.svg";
+import Clock from "../../assets/img/ic_gray_clock.svg";
 
 const Review = () => {
     const [activeTab, setActiveTab] = useState("pending");

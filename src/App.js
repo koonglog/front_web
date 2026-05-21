@@ -15,10 +15,14 @@ import TodayTotal from './pages/dashboard/TodayTotal';
 import FinishedAdjust from './pages/dashboard/FinishedAdjust';
 import NoticeWrite from './pages/notice/NoticeWrite';
 import NoticeDetail from './pages/notice/NoticeDetail';
+import Login from './pages/login/Login';
+import SignUp from './pages/signup/SignUp';
 
 const App = () => {
 	return (
 		<Routes>
+			<Route path="/login" element={<Login />} />
+			<Route path="/signup" element={<SignUp />} />
 			<Route path="/" element={<RootLayout />}>
 				<Route index element={<Home />} />
 				<Route path="dashboard" element={<Dashboard />} />

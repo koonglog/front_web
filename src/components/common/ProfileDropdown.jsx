@@ -1,6 +1,6 @@
 import React from 'react';
-import Logout from "../../assets/img/ic_logout.svg";
-import User from "../../assets/img/ic_user.svg";
+import Logout from "../../assets/img/ic_black_logout.svg";
+import User from "../../assets/img/ic_black_user.svg";
 import { useNavigate } from 'react-router-dom';
 
 const ProfileDropdown = () => {

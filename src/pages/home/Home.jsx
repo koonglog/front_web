@@ -1,13 +1,13 @@
 import React from 'react';
 import Logo from "../../assets/img/ic_logo.svg";
-import HomeIcon from "../../assets/img/ic_blue_home.png";
-import Warning from "../../assets/img/ic_red_warning.png";
-import Calendar from "../../assets/img/ic_orange_calendar.png";
-import Notice from "../../assets/img/ic_green_notice.png";
-import Edit from "../../assets/img/ic_edit.png";
-import Network from "../../assets/img/ic_red_network.png";
-import Data from "../../assets/img/ic_green_data.png";
-import Check from "../../assets/img/ic_green_check.png";
+import HomeIcon from "../../assets/img/ic_blue_home.svg";
+import Warning from "../../assets/img/ic_red_warning.svg";
+import Calendar from "../../assets/img/ic_orange_calendar.svg";
+import Notice from "../../assets/img/ic_green_notice.svg";
+import Edit from "../../assets/img/ic_white_edit.svg";
+import Network from "../../assets/img/ic_red_nowifi.svg";
+import Data from "../../assets/img/ic_green_database.svg";
+import Check from "../../assets/img/ic_green_check.svg";
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
 

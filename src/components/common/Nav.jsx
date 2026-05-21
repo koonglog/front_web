@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/img/ic_logo.svg';
-import Alarm from '../../assets/img/ic_alarm.svg';
-import Dashboard from '../../assets/img/ic_dashboard.svg';
-import Distribution from '../../assets/img/ic_distribution.svg';
-import LogAnalysis from '../../assets/img/ic_loganalysis.svg';
-import Review from '../../assets/img/ic_review.svg';
-import Notice from '../../assets/img/ic_notice.svg';
-import ExtService from '../../assets/img/ic_extservice.svg';
+import Alarm from '../../assets/img/ic_gray_alarm.svg';
+import Dashboard from '../../assets/img/ic_gray_dashboard.svg';
+import Distribution from '../../assets/img/ic_gray_building.svg';
+import LogAnalysis from '../../assets/img/ic_gray_log.svg';
+import Review from '../../assets/img/ic_gray_people.svg';
+import Notice from '../../assets/img/ic_gray_notice.svg';
+import ExtService from '../../assets/img/ic_gray_extservice.svg';
 import ProfileDropdown from './ProfileDropdown';
 
 const Nav = () => {
@@ -90,7 +90,9 @@ const Nav = () => {
             <div className="divider"></div>
             <div className="nav_bottom">
                 {navItems.map((item) => {
-                    const isActive = location.pathname === item.path;
+                    const isActive =
+                        location.pathname === item.path ||
+                        location.pathname.startsWith(`${item.path}/`);
 
                     return (
                         <div

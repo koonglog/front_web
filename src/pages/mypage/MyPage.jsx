@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import MasterIcon from "../../assets/img/ic_master.png";
-import Check from "../../assets/img/ic_green_check.png";
-import Shield from "../../assets/img/ic_orange_shield.png";
-import Network from "../../assets/img/ic_blue_network.png";
-import Wrench from "../../assets/img/ic_orange_wrench.png";
-import Setting from "../../assets/img/ic_purple_setting.png";
-import Goal from "../../assets/img/ic_orange_goal.png";
-import Alarm from "../../assets/img/ic_orange_alarm.png";
+import MasterIcon from "../../assets/img/ic_orange_master.svg";
+import Check from "../../assets/img/ic_green_check.svg";
+import Shield from "../../assets/img/ic_orange_shield.svg";
+import Network from "../../assets/img/ic_blue_wifi.svg";
+import Wrench from "../../assets/img/ic_orange_wrench.svg";
+import Setting from "../../assets/img/ic_purple_setting.svg";
+import Goal from "../../assets/img/ic_orange_goal.svg";
+import Bell from "../../assets/img/ic_orange_bell.svg";
 
 const MyPage = () => {
     const [isAlarmBlocked, setIsAlarmBlocked] = useState(false);
@@ -192,7 +192,7 @@ const MyPage = () => {
                     <div className="title">
                         <div className="title_left">
                             <div className="icon">
-                                <img src={Alarm} alt="Alarm" />
+                                <img src={Bell} alt="Bell" />
                             </div>
                             <div className="text">
                                 <div className="alarm_title">업무 시간외 알림 차단</div>

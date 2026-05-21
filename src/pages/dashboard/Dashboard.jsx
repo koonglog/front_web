@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import Search from "../../assets/img/ic_gray_search.png";
-import HomeIcon from "../../assets/img/ic_blue_home.png";
-import Warning from "../../assets/img/ic_red_warning.png";
-import Calendar from "../../assets/img/ic_orange_calendar.png";
-import Check from "../../assets/img/ic_green_check.png";
-import Filter from "../../assets/img/ic_gray_filter.png";
-import Message from "../../assets/img/ic_green_message.png";
+import Search from "../../assets/img/ic_gray_search.svg";
+import HomeIcon from "../../assets/img/ic_blue_home.svg";
+import Warning from "../../assets/img/ic_red_warning.svg";
+import Calendar from "../../assets/img/ic_orange_calendar.svg";
+import Check from "../../assets/img/ic_green_check.svg";
+import Filter from "../../assets/img/ic_gray_filter.svg";
+import Message from "../../assets/img/ic_green_message.svg";
 import {
     households,
     feedItems,
     dashboardSummary,
 } from "../../mocks/dashboardData";
-import Clock from "../../assets/img/ic_gray_clock.png";
-import Notice from "../../assets/img/ic_orange_warning.png";
+import Clock from "../../assets/img/ic_gray_clock.svg";
+import Notice from "../../assets/img/ic_orange_notice.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import DownArrow from "../../assets/img/ic_gray_down_arrow.png";
-import UpArrow from "../../assets/img/ic_gray_up_arrow.png";
-import Download from "../../assets/img/ic_white_download.png";
+import DownArrow from "../../assets/img/ic_chevron_down.svg";
+import UpArrow from "../../assets/img/ic_chevron_up.svg";
+import Download from "../../assets/img/ic_white_download.svg";
 
 const LogAnalysis = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);

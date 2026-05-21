@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Back from "../../assets/img/ic_back.png";
+import Back from "../../assets/img/ic_gray_back.svg";
 import { households } from "../../mocks/dashboardData";
-import Warning from "../../assets/img/ic_white_warning.png";
-import Message from "../../assets/img/ic_green_message.png";
+import Warning from "../../assets/img/ic_white_warning.svg";
+import Message from "../../assets/img/ic_green_message.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
 

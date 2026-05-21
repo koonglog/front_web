@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import Back from "../../assets/img/ic_back.png";
-import Target from "../../assets/img/ic_orange_target.png";
-import WhitePeople from "../../assets/img/ic_white_people.png";
-import BlackPeople from "../../assets/img/ic_black_people.png";
-import WhiteBuildings from "../../assets/img/ic_white_buildings.png";
-import BlackBuildings from "../../assets/img/ic_black_buildings.png";
-import Edit from "../../assets/img/ic_orange_edit.png";
-import More from "../../assets/img/ic_orange_template.png";
-import Send from "../../assets/img/ic_white_send.png";
-import Clock from "../../assets/img/ic_gray_clock.png";
-import OrangeCheck from "../../assets/img/ic_orange_check.png";
-import RedCancel from "../../assets/img/ic_red_cancel.png";
+import Back from "../../assets/img/ic_gray_back.svg";
+import Goal from "../../assets/img/ic_orange_goal.svg";
+import WhitePeople from "../../assets/img/ic_white_prople.svg";
+import BlackPeople from "../../assets/img/ic_gray_people.svg";
+import WhiteBuildings from "../../assets/img/ic_white_building.svg";
+import BlackBuildings from "../../assets/img/ic_gray_building.svg";
+import Edit from "../../assets/img/ic_orange_edit.svg";
+import More from "../../assets/img/ic_orange_template.svg";
+import Send from "../../assets/img/ic_white_send.svg";
+import Clock from "../../assets/img/ic_gray_clock.svg";
+import OrangeCheck from "../../assets/img/ic_orange_check.svg";
+import RedCancel from "../../assets/img/ic_red_cancel.svg";
 import { useNavigate } from 'react-router-dom';
 import { noticeTypes } from "../../mocks/noticeData.js";
 import { residentMockData } from '../../mocks/residentMockData.js';
@@ -114,7 +114,7 @@ const NoticeWrite = () => {
                 <div className="target_box">
                     <div className="target_title">
                         <div className="icon">
-                            <img src={Target} alt="Target" />
+                            <img src={Goal} alt="Goal" />
                         </div>
                         <div className="title">발송 대상 선택</div>
                     </div>

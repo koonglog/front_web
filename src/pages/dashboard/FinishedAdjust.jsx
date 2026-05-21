@@ -1,7 +1,7 @@
 import React from 'react';
-import Back from "../../assets/img/ic_back.png";
+import Back from "../../assets/img/ic_gray_back.svg";
 import { finishedAdjustItems } from "../../mocks/dashboardData";
-import Check from "../../assets/img/ic_white_check.png";
+import Check from "../../assets/img/ic_white_check.svg";
 import { useNavigate } from 'react-router-dom';
 
 const FinishedAdjust = () => {

@@ -1,8 +1,8 @@
 import React from 'react';
-import Call from "../../assets/img/ic_gray_call.png";
-import HighlightDocs from "../../assets/img/ic_highlight_docs.png";
-import Download from "../../assets/img/ic_white_download.png";
-import GrayDocs from "../../assets/img/ic_gray_docs.png";
+import Call from "../../assets/img/ic_gray_call.svg";
+import HighlightDocs from "../../assets/img/ic_highlight_docs.svg";
+import Download from "../../assets/img/ic_white_download.svg";
+import GrayDocs from "../../assets/img/ic_gray_docs.svg";
 
 const ExtService = () => {
     return (

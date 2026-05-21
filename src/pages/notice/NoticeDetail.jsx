@@ -1,9 +1,9 @@
 import React from 'react';
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate, useParams } from 'react-router-dom';
-import Back from "../../assets/img/ic_back.png";
-import Calendar from "../../assets/img/ic_gray_calendar.png";
-import People from "../../assets/img/ic_gray_people.png";
+import Back from "../../assets/img/ic_gray_back.svg";
+import Calendar from "../../assets/img/ic_gray_calendar.svg";
+import People from "../../assets/img/ic_gray_people.svg";
 
 const NoticeDetail = () => {
     const navigate = useNavigate();
