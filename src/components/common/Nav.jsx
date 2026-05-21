@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/img/ic_logo.svg';
 import Alarm from '../../assets/img/ic_alarm.svg';
@@ -8,10 +8,13 @@ import LogAnalysis from '../../assets/img/ic_loganalysis.svg';
 import Review from '../../assets/img/ic_review.svg';
 import Notice from '../../assets/img/ic_notice.svg';
 import ExtService from '../../assets/img/ic_extservice.svg';
+import ProfileDropdown from './ProfileDropdown';
 
 const Nav = () => {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     const navItems = [
         {
@@ -75,8 +78,13 @@ const Nav = () => {
                     </div>
                     <div
                         className="nav_user"
-                        onClick={() => navigate('/mypage')}
-                    >김관리 관리자</div>  {/* 추후에 API에서 받아올 예정 */}
+                        onClick={() => setIsProfileOpen(prev => !prev)}
+                    >
+                        김관리 관리자
+                    </div>  {/* 추후에 API에서 받아올 예정 */}
+                    {isProfileOpen && (
+                        <ProfileDropdown />
+                    )}
                 </div>
             </div>
             <div className="divider"></div>
