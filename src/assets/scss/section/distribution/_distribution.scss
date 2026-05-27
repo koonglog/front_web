@@ -66,10 +66,107 @@
         }
 
         .distribution_map {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--black);
-            text-align: center;
+            width: 100%;
+            min-height: 260px;
+
+            .map_status {
+                width: 100%;
+                height: 220px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 15px;
+                color: var(--gray);
+            }
+
+            .building_list {
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                gap: 30px;
+
+                .building_card {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    border: 1px solid var(--lightgray);
+                    border-radius: 16px;
+                    background-color: var(--designgray);
+                    padding: 26px;
+                    gap: 24px;
+
+                    .building_name {
+                        text-align: center;
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: var(--black);
+                    }
+
+                    .household_list {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 12px;
+
+                        .household_item {
+                            width: 200px;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 12px;
+                            padding: 18px;
+                            gap: 4px;
+
+                            .unit_number {
+                                font-size: 14px;
+                                font-weight: 700;
+                                color: var(--black);
+                            }
+
+                            .count {
+                                font-size: 12px;
+                                font-weight: 500;
+                                color: var(--lightblack);
+                            }
+
+                            &.urgent {
+                                background-color: var(--highlight);
+                                border: none;
+
+                                .unit_number,
+                                .count {
+                                    color: var(--white);
+                                }
+                            }
+
+                            &.caution {
+                                background-color: var(--subcolor);
+                                border: none;
+
+                                .unit_number,
+                                .count {
+                                    color: var(--lightblack);
+                                }
+                            }
+
+                            &.normal {
+                                background-color: var(--white);
+                                border: 1px solid var(--lightgray);
+
+                                .unit_number {
+                                    color: var(--black);
+                                }
+
+                                .count {
+                                    color: var(--lightblack);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         .divider {
