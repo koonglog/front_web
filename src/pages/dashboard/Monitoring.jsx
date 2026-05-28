@@ -131,6 +131,7 @@ const Monitoring = () => {
                     <div className="modal_overlay" onClick={() => setSelectedHousehold(null)}>
                         <div onClick={(e) => e.stopPropagation()}>
                             <SendMessageModal
+                                householdId={selectedHousehold.household_id}
                                 receiverHouse={`${selectedHousehold.building_name} ${selectedHousehold.unit_number}`}
                                 receiverName={selectedHousehold.resident_name}
                                 onClose={() => setSelectedHousehold(null)}

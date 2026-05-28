@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Cancel from "../../assets/img/ic_gray_cancel.svg";
 import Send from "../../assets/img/ic_white_send.svg";
+import { getHouseholdNoiseStats } from '../../api/dashboardApi';
 // import { messageTypes } from "../../mocks/dashboardData";
 
 const messageTypes = [
@@ -10,14 +11,61 @@ const messageTypes = [
     "점검 안내",
 ];
 
-const SendMessageModal = ({ receiverHouse, receiverName, onClose }) => {
+const SendMessageModal = ({ householdId, receiverHouse, receiverName, onClose }) => {
     const [selectedType, setSelectedType] = useState("");
     const [messageTitle, setMessageTitle] = useState("");
     const [messageContent, setMessageContent] = useState("");
 
+    const [noiseStats, setNoiseStats] = useState({
+        total_count: 0,
+        high_count: 0,
+        avg_duration_min: 0,
+    });
+
+    const [isNoiseStatsLoading, setIsNoiseStatsLoading] = useState(true);
+    const [isNoiseStatsError, setIsNoiseStatsError] = useState(false);
+
+    useEffect(() => {
+        const fetchNoiseStats = async () => {
+            if (!householdId) return;
+
+            try {
+                setIsNoiseStatsLoading(true);
+                setIsNoiseStatsError(false);
+
+                const data = await getHouseholdNoiseStats(householdId);
+
+                setNoiseStats({
+                    total_count: data.total_count ?? 0,
+                    high_count: data.high_count ?? 0,
+                    avg_duration_min: data.avg_duration_min ?? 0,
+                });
+            } catch (error) {
+                console.error("세대 소음 통계 조회 실패:", error);
+                setIsNoiseStatsError(true);
+            } finally {
+                setIsNoiseStatsLoading(false);
+            }
+        };
+
+        fetchNoiseStats();
+    }, [householdId]);
+
     const handleClickMessageType = (type) => {
         setSelectedType(type);
         setMessageTitle(`[${type}] `);
+    };
+
+    const renderNoiseStatsText = () => {
+        if (isNoiseStatsLoading) {
+            return "소음 데이터를 불러오는 중입니다.";
+        }
+
+        if (isNoiseStatsError) {
+            return "소음 데이터 조회에 실패했습니다.";
+        }
+
+        return `오늘 감지: ${noiseStats.total_count}건 | 고강도: ${noiseStats.high_count}건 | 평균 지속: ${noiseStats.avg_duration_min}분`;
     };
 
     return (
@@ -75,7 +123,7 @@ const SendMessageModal = ({ receiverHouse, receiverName, onClose }) => {
                 <div className="divider"></div>
                 <div className="recent_data">
                     <div className="recent_title">해당 세대의 최근 24시간 소음 데이터 첨부</div>
-                    <div className="data_item">오늘 감지: 7건 | 고강도: 3건 | 평균 지속: 12분</div>
+                    <div className="data_item">{renderNoiseStatsText()}</div>
                 </div>
             </div>
             <div className="divider"></div>

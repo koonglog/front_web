@@ -19,3 +19,11 @@ export const getDashboardStats = async () => {
     const response = await CustomAxios.get("/api/v1/dashboard/stats");
     return response.data;
 };
+
+export const getHouseholdNoiseStats = async (householdId) => {
+    const response = await CustomAxios.get(
+        `/api/v1/households/${householdId}/noise-stats`
+    );
+
+    return response.data;
+};
