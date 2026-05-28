@@ -1,0 +1,21 @@
+import CustomAxios from "./CustomAxios";
+
+export const getDashboardHouseholds = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/households");
+    return response.data;
+};
+
+export const getDashboardHourly = async (hours = 24) => {
+    const response = await CustomAxios.get("/api/v1/dashboard/hourly", {
+        params: {
+            hours,
+        },
+    });
+
+    return response.data;
+};
+
+export const getDashboardStats = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/stats");
+    return response.data;
+};

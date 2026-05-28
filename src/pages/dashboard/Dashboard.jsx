@@ -1,26 +1,119 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Search from "../../assets/img/ic_gray_search.svg";
 import HomeIcon from "../../assets/img/ic_blue_home.svg";
 import Warning from "../../assets/img/ic_red_warning.svg";
 import Calendar from "../../assets/img/ic_orange_calendar.svg";
 import Check from "../../assets/img/ic_green_check.svg";
-import Filter from "../../assets/img/ic_gray_filter.svg";
+import ChevronDown from "../../assets/img/ic_chevron_down.svg";
+import ChevronUp from "../../assets/img/ic_chevron_up.svg";
 import Message from "../../assets/img/ic_green_message.svg";
 import {
     households,
     feedItems,
-    dashboardSummary,
 } from "../../mocks/dashboardData";
 import Clock from "../../assets/img/ic_gray_clock.svg";
 import Notice from "../../assets/img/ic_orange_notice.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
+import { getDashboardHourly, getDashboardStats } from '../../api/dashboardApi';
 
 const Dashboard = () => {
     const navigate = useNavigate();
 
+    const hourlyFilterOptions = [
+        { label: "최근 24시간", value: 24 },
+        { label: "최근 12시간", value: 12 },
+        { label: "최근 3시간", value: 3 },
+        { label: "최근 1시간", value: 1 },
+    ];
+
     const [selectedHousehold, setSelectedHousehold] = useState(households[0]);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+
+    const [dashboardStats, setDashboardStats] = useState({
+        total_households: 0,
+        urgent_households: 0,
+        today_noise_count: 0,
+        completed_count: 0,
+    });
+
+    const [isStatsLoading, setIsStatsLoading] = useState(true);
+    const [isStatsError, setIsStatsError] = useState(false);
+
+    const [hourlyData, setHourlyData] = useState([]);
+    const [hourlyPeriod, setHourlyPeriod] = useState("최근 24시간");
+    const [isHourlyLoading, setIsHourlyLoading] = useState(true);
+    const [isHourlyError, setIsHourlyError] = useState(false);
+
+    const [selectedHourlyFilter, setSelectedHourlyFilter] = useState(hourlyFilterOptions[0]);
+    const [isHourlyFilterOpen, setIsHourlyFilterOpen] = useState(false);
+
+    const formatHourlyData = (hourly) => {
+        if (!hourly) return [];
+
+        return Object.entries(hourly)
+            .sort(([hourA], [hourB]) => Number(hourA) - Number(hourB))
+            .map(([hour, value]) => ({
+                hour: hour.padStart(2, "0"),
+                total: value.total ?? 0,
+            }));
+    };
+
+    useEffect(() => {
+        const fetchHourlyData = async () => {
+            try {
+                setIsHourlyLoading(true);
+                setIsHourlyError(false);
+
+                const data = await getDashboardHourly(selectedHourlyFilter.value);
+
+                setHourlyData(formatHourlyData(data.hourly));
+                setHourlyPeriod(data.period || selectedHourlyFilter.label);
+            } catch (error) {
+                console.error("전체 시간대별 발생 현황 조회 실패:", error);
+                setIsHourlyError(true);
+            } finally {
+                setIsHourlyLoading(false);
+            }
+        };
+
+        fetchHourlyData();
+    }, [selectedHourlyFilter]);
+
+    useEffect(() => {
+        const fetchDashboardStats = async () => {
+            try {
+                setIsStatsLoading(true);
+                setIsStatsError(false);
+
+                const data = await getDashboardStats();
+
+                setDashboardStats({
+                    total_households: data.total_households ?? 0,
+                    urgent_households: data.urgent_households ?? 0,
+                    today_noise_count: data.today_noise_count ?? 0,
+                    completed_count: data.completed_count ?? 0,
+                });
+            } catch (error) {
+                console.error("대시보드 통계 조회 실패:", error);
+                setIsStatsError(true);
+            } finally {
+                setIsStatsLoading(false);
+            }
+        };
+
+        fetchDashboardStats();
+    }, []);
+
+    const maxHourlyTotal = Math.max(
+        ...hourlyData.map((item) => item.total),
+        1
+    );
+
+    const handleClickHourlyFilter = (option) => {
+        setSelectedHourlyFilter(option);
+        setIsHourlyFilterOpen(false);
+    };
 
     return (
         <div className='Dashboard_Wrap'>
@@ -67,7 +160,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">모니터링 세대</div>
-                            <div className="number">{dashboardSummary.monitoring}</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{isStatsLoading ? "-" : dashboardStats.total_households}</div>
                         </div>
                     </div>
                     <div
@@ -79,7 +172,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">긴급 대응 필요</div>
-                            <div className="number">{dashboardSummary.emergency}</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{isStatsLoading ? "-" : dashboardStats.urgent_households}</div>
                         </div>
                     </div>
                     <div
@@ -90,8 +183,8 @@ const Dashboard = () => {
                             <img src={Calendar} alt="Calendar" />
                         </div>
                         <div className="text">
-                            <div className="title">오늘 발생 소음 총합</div>
-                            <div className="number">{dashboardSummary.todayTotal}</div>  {/* 추후 API 연결 예정 */}
+                            <div className="title">오늘 발생 소음 종합</div>
+                            <div className="number">{isStatsLoading ? "-" : dashboardStats.today_noise_count}</div>
                         </div>
                     </div>
                     <div
@@ -103,7 +196,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text">
                             <div className="title">조치 완료</div>
-                            <div className="number">{dashboardSummary.finishedAdjust}</div>  {/* 추후 API 연결 예정 */}
+                            <div className="number">{isStatsLoading ? "-" : dashboardStats.completed_count}</div>
                         </div>
                     </div>
                 </div>
@@ -159,18 +252,79 @@ const Dashboard = () => {
                     <div className="status_title">
                         <div className="title_left">
                             <div className="title">전체 시간대별 발생 현황</div>
-                            <div className="caption">모든 세대 합산 · 최근 24시간</div>
+                            <div className="caption">모든 세대 합산 · {hourlyPeriod}</div>
                         </div>
-                        <div className="title_right">
+                        <div
+                            className="title_right"
+                            onClick={() => setIsHourlyFilterOpen((prev) => !prev)}
+                        >
                             <div className="icon">
-                                <img src={Filter} alt="Filter" />
+                                <img
+                                    src={isHourlyFilterOpen ? ChevronUp : ChevronDown}
+                                    alt="Chevron"
+                                />
                             </div>
-                            <div className="text">필터</div>
+                            <div className="text">{selectedHourlyFilter.label}</div>
+                            {isHourlyFilterOpen && (
+                                <div className="filter_dropdown">
+                                    {hourlyFilterOptions.map((option) => (
+                                        <div
+                                            key={option.value}
+                                            className={`dropdown_item ${selectedHourlyFilter.value === option.value ? "active" : ""}`}
+                                            onClick={() => handleClickHourlyFilter(option)}
+                                        >
+                                            {option.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="status_graph">
-                        전체 시간대별 소음 발생 현황입니다.
-                    </div>  {/* 추후 API 연결 예정 */}
+                        {isHourlyLoading && (
+                            <div className="graph_status">
+                                시간대별 발생 현황을 불러오는 중입니다.
+                            </div>
+                        )}
+                        {isHourlyError && (
+                            <div className="graph_status">
+                                시간대별 발생 현황 조회에 실패했습니다.
+                            </div>
+                        )}
+                        {!isHourlyLoading && !isHourlyError && (
+                            <div className="hourly_chart">
+                                <div className="chart_grid">
+                                    {[16, 12, 8, 4, 0].map((value) => (
+                                        <div className="grid_row" key={value}>
+                                            <div className="y_label">{value}</div>
+                                            <div className="grid_line"></div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="bar_chart">
+                                    {hourlyData.map((item) => {
+                                        const barHeight = item.total === 0
+                                            ? 0.9
+                                            : Math.max((item.total / maxHourlyTotal) * 100, 8);
+
+                                        return (
+                                            <div className="bar_item" key={item.hour}>
+                                                <div className="bar_box">
+                                                    <div
+                                                        className="bar"
+                                                        style={{
+                                                            height: `${barHeight}%`,
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                                <div className="hour_label">{item.hour}시</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="household_analysis">
                     <div className="household_title">

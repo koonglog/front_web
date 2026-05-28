@@ -670,12 +670,137 @@
                         font-weight: 500;
                         color: var(--lightblack);
                     }
+
+                    .filter_dropdown {
+                        position: absolute;
+                        top: calc(100% + 90px);
+                        right: 0;
+                        width: 120px;
+                        display: flex;
+                        flex-direction: column;
+                        margin-right: 73px;
+                        padding: 6px;
+                        background-color: var(--white);
+                        border: 1px solid var(--designgray);
+                        border-radius: 10px;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+                        z-index: 20;
+
+                        .dropdown_item {
+                            padding: 10px 12px;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            color: var(--lightblack);
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: var(--deepwhite);
+                            }
+
+                            &.active {
+                                background-color: var(--subcolor);
+                                color: var(--white);
+                            }
+                        }
+                    }
                 }
             }
 
             .status_graph {
-                display: flex;
-                justify-content: center;
+                width: 100%;
+                height: 240px;
+                position: relative;
+
+                .graph_status {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 220px;
+                    font-size: 14px;
+                    color: var(--gray);
+                }
+
+                .hourly_chart {
+                    position: relative;
+                    width: 100%;
+                    height: 220px;
+                    padding: 0 0 24px 0;
+
+                    .chart_grid {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 24px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+
+                        .grid_row {
+                            display: flex;
+                            align-items: center;
+                            width: 100%;
+
+                            .y_label {
+                                width: 28px;
+                                font-size: 12px;
+                                color: var(--gray);
+                                text-align: left;
+                            }
+
+                            .grid_line {
+                                flex: 1;
+                                border-top: 1px dashed #e5e7eb;
+                            }
+                        }
+                    }
+
+                    .bar_chart {
+                        position: absolute;
+                        left: 28px;
+                        right: 0;
+                        top: 0;
+                        bottom: 0;
+                        display: flex;
+                        align-items: flex-end;
+                        justify-content: space-between;
+                        gap: 12px;
+                        padding-bottom: 0;
+
+                        .bar_item {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            flex: 1;
+                            height: 100%;
+
+                            .bar_box {
+                                display: flex;
+                                align-items: flex-end;
+                                justify-content: center;
+                                width: 100%;
+                                height: calc(100% - 24px);
+
+                                .bar {
+                                    width: 100%;
+                                    max-width: 62px;
+                                    background-color: var(--main);
+                                    border-radius: 8px 8px 0 0;
+                                    transition: height 0.2s ease;
+                                }
+                            }
+
+                            .hour_label {
+                                height: 24px;
+                                margin-top: 6px;
+                                font-size: 12px;
+                                color: var(--gray);
+                                white-space: nowrap;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -2008,6 +2133,12 @@
                     font-weight: 500;
                     color: var(--black);
                     cursor: pointer;
+
+                    &.active {
+                        background-color: var(--main);
+                        border: none;
+                        color: var(--white);
+                    }
                 }
             }
         }
