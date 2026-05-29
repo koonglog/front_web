@@ -4,6 +4,7 @@ import LogoName from "../../assets/img/ic_logo_name.svg";
 import Hide from "../../assets/img/ic_gray_hide.svg";
 import Seek from "../../assets/img/ic_gray_seek.svg";
 import { useNavigate } from 'react-router-dom';
+import { loginAdmin } from '../../api/authApi';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -12,18 +13,46 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!email || !password) {
             setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
             return;
         }
 
-        setErrorMessage('');
+        try {
+            setIsLoading(true);
+            setErrorMessage('');
 
-        // 임시 로그인 처리
-        localStorage.setItem('isLogin', 'true');
-        navigate('/');
+            const data = await loginAdmin({
+                email,
+                password,
+            });
+
+            if (data.status === 'success') {
+                localStorage.setItem('accessToken', data.access_token);
+                localStorage.setItem('tokenType', data.token_type);
+                localStorage.setItem('admin', JSON.stringify(data.admin));
+                localStorage.setItem('isLogin', 'true');
+
+                navigate('/');
+            } else {
+                setErrorMessage('로그인에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error(error);
+
+            if (error.response?.status === 401) {
+                setErrorMessage('이메일 또는 비밀번호가 올바르지 않습니다.');
+            } else if (error.response?.data?.message) {
+                setErrorMessage(error.response.data.message);
+            } else {
+                setErrorMessage('로그인 중 오류가 발생했습니다.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -71,6 +100,11 @@ const Login = () => {
                                 className="login_password_input"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleLogin();
+                                    }
+                                }}
                             />
                             <div
                                 className="icon"
@@ -87,8 +121,11 @@ const Login = () => {
                                 {errorMessage}
                             </div>
                         )}
-                        <div className="login_btn" onClick={handleLogin}>
-                            로그인
+                        <div
+                            className={`login_btn ${isLoading ? 'disabled' : ''}`}
+                            onClick={isLoading ? undefined : handleLogin}
+                        >
+                            {isLoading ? '로그인 중...' : '로그인'}
                         </div>
                         <div className="divider"></div>
                         <div className="option">

@@ -16,6 +16,9 @@ const Nav = () => {
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+    const admin = JSON.parse(localStorage.getItem('admin'));
+    const adminName = admin?.name || admin?.username || '관리자';
+
     const navItems = [
         {
             path: '/dashboard',
@@ -80,8 +83,8 @@ const Nav = () => {
                         className="nav_user"
                         onClick={() => setIsProfileOpen(prev => !prev)}
                     >
-                        김관리 관리자
-                    </div>  {/* 추후에 API에서 받아올 예정 */}
+                        {adminName} 관리자
+                    </div>
                     {isProfileOpen && (
                         <ProfileDropdown />
                     )}

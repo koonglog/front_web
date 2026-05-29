@@ -17,27 +17,31 @@ import NoticeWrite from './pages/notice/NoticeWrite';
 import NoticeDetail from './pages/notice/NoticeDetail';
 import Login from './pages/login/Login';
 import SignUp from './pages/signup/SignUp';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 const App = () => {
 	return (
 		<Routes>
 			<Route path="/login" element={<Login />} />
 			<Route path="/signup" element={<SignUp />} />
-			<Route path="/" element={<RootLayout />}>
-				<Route index element={<Home />} />
-				<Route path="dashboard" element={<Dashboard />} />
-				<Route path="dashboard/monitoring" element={<Monitoring />} />
-				<Route path="dashboard/emergency" element={<Emergency />} />
-				<Route path="dashboard/todayTotal" element={<TodayTotal />} />
-				<Route path="dashboard/finishedAdjust" element={<FinishedAdjust />} />
-				<Route path="distribution" element={<Distribution />} />
-				<Route path="log-analysis" element={<LogAnalysis />} />
-				<Route path="review" element={<Review />} />
-				<Route path="notice" element={<Notice />} />
-				<Route path="notice/write" element={<NoticeWrite />} />
-				<Route path="notice/:noticeId" element={<NoticeDetail />} />
-				<Route path="external-service" element={<ExtService />} />
-				<Route path="mypage" element={<MyPage />} />
+
+			<Route element={<ProtectedRoute />}>
+				<Route path="/" element={<RootLayout />}>
+					<Route index element={<Home />} />
+					<Route path="dashboard" element={<Dashboard />} />
+					<Route path="dashboard/monitoring" element={<Monitoring />} />
+					<Route path="dashboard/emergency" element={<Emergency />} />
+					<Route path="dashboard/todayTotal" element={<TodayTotal />} />
+					<Route path="dashboard/finishedAdjust" element={<FinishedAdjust />} />
+					<Route path="distribution" element={<Distribution />} />
+					<Route path="log-analysis" element={<LogAnalysis />} />
+					<Route path="review" element={<Review />} />
+					<Route path="notice" element={<Notice />} />
+					<Route path="notice/write" element={<NoticeWrite />} />
+					<Route path="notice/:noticeId" element={<NoticeDetail />} />
+					<Route path="external-service" element={<ExtService />} />
+					<Route path="mypage" element={<MyPage />} />
+				</Route>
 			</Route>
 		</Routes>
 	);
