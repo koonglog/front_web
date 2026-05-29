@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MasterIcon from "../../assets/img/ic_orange_master.svg";
 import Check from "../../assets/img/ic_green_check.svg";
 import Shield from "../../assets/img/ic_orange_shield.svg";
@@ -7,6 +7,7 @@ import Wrench from "../../assets/img/ic_orange_wrench.svg";
 import Setting from "../../assets/img/ic_purple_setting.svg";
 import Goal from "../../assets/img/ic_orange_goal.svg";
 import Bell from "../../assets/img/ic_orange_bell.svg";
+import { getSensorStatus } from '../../api/sensorApi';
 
 const MyPage = () => {
     const [isAlarmBlocked, setIsAlarmBlocked] = useState(false);
@@ -18,10 +19,48 @@ const MyPage = () => {
     const signupDate = "2024.01.15";
     const authorityLevel = "Master";
     const authorityLevelKr = "최고 관리자";
-    const onlineSensors = 5;
-    const offlineSensors = 1;
-    const averageBattery = 73;
-    const needAdjustment = 3;
+
+    const [sensorStatus, setSensorStatus] = useState({
+        total_sensors: 0,
+        online_sensors: 0,
+        avg_battery: 0,
+        needs_calibration: 0,
+        sensors: [],
+    });
+
+    const [isSensorLoading, setIsSensorLoading] = useState(true);
+    const [isSensorError, setIsSensorError] = useState(false);
+
+    useEffect(() => {
+        const fetchSensorStatus = async () => {
+            try {
+                setIsSensorLoading(true);
+                setIsSensorError(false);
+
+                const data = await getSensorStatus();
+
+                setSensorStatus({
+                    total_sensors: data.total_sensors ?? 0,
+                    online_sensors: data.online_sensors ?? 0,
+                    avg_battery: data.avg_battery ?? 0,
+                    needs_calibration: data.needs_calibration ?? 0,
+                    sensors: data.sensors ?? [],
+                });
+            } catch (error) {
+                console.error("센서 상태 조회 실패:", error);
+                setIsSensorError(true);
+            } finally {
+                setIsSensorLoading(false);
+            }
+        };
+
+        fetchSensorStatus();
+    }, []);
+
+    const offlineSensors = sensorStatus.total_sensors - sensorStatus.online_sensors;
+    const calibrationSensors = sensorStatus.sensors.filter(
+        (sensor) => sensor.calibration_offset !== 0
+    );
 
     return (
         <div className='MyPage_Wrap'>
@@ -104,59 +143,72 @@ const MyPage = () => {
                 <div className="infra_info">
                     <div className="online">
                         <div className="title">온라인 센서</div>
-                        <div className="value">{onlineSensors}개</div>
+                        <div className="value">{isSensorLoading ? "-" : `${sensorStatus.online_sensors}개`}</div>
                     </div>
                     <div className="offline">
                         <div className="title">오프라인 센서</div>
-                        <div className="value">{offlineSensors}개</div>
+                        <div className="value">{isSensorLoading ? "-" : `${offlineSensors}개`}</div>
                     </div>
                     <div className="battery">
                         <div className="title">평균 배터리</div>
-                        <div className="value">{averageBattery}%</div>
+                        <div className="value">{isSensorLoading ? "-" : `${sensorStatus.avg_battery}%`}</div>
                     </div>
                     <div className="need_adjust">
                         <div className="title">영점 조정 필요</div>
-                        <div className="value">{needAdjustment}개</div>
+                        <div className="value">{isSensorLoading ? "-" : `${sensorStatus.needs_calibration}개`}</div>
                     </div>
                 </div>
                 <div className="adjust_list">
                     <div className="title">영점 조절(Calibration) 리스트</div>
-                    <div className="item_list">
-                        <div className="item_left">
-                            <div className="icon">
-                                <img src={Wrench} alt="Wrench" />
+                    <>
+                        {isSensorLoading && (
+                            <div className="item_list">
+                                <div className="item_left">
+                                    <div className="text">
+                                        <div className="sensor_location">센서 정보를 불러오는 중입니다.</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text">
-                                <div className="sensor_location">A동 304호</div>  {/* 추후 API 연동 예정 */}
-                                <div className="sensor_info">센서 ID: SN-A304-01 · 마지막 점검: 2026.03.15</div>  {/* 추후 API 연동 예정 */}
+                        )}
+                        {isSensorError && (
+                            <div className="item_list">
+                                <div className="item_left">
+                                    <div className="text">
+                                        <div className="sensor_location">센서 정보를 불러오지 못했습니다.</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="item_right">원격 영점 조절</div>
-                    </div>
-                    <div className="item_list">
-                        <div className="item_left">
-                            <div className="icon">
-                                <img src={Wrench} alt="Wrench" />
+                        )}
+                        {!isSensorLoading && !isSensorError && calibrationSensors.length === 0 && (
+                            <div className="item_list">
+                                <div className="item_left">
+                                    <div className="icon">
+                                        <img src={Wrench} alt="Wrench" />
+                                    </div>
+                                    <div className="text">
+                                        <div className="sensor_location">영점 조정이 필요한 센서가 없습니다.</div>
+                                        <div className="sensor_info">현재 모든 센서가 정상 상태입니다.</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text">
-                                <div className="sensor_location">A동 705호</div>  {/* 추후 API 연동 예정 */}
-                                <div className="sensor_info">센서 ID: SN-A705-01 · 마지막 점검: 2026.02.28</div>  {/* 추후 API 연동 예정 */}
+                        )}
+                        {!isSensorLoading && !isSensorError && calibrationSensors.map((sensor) => (
+                            <div className="item_list" key={sensor.sensor_id}>
+                                <div className="item_left">
+                                    <div className="icon">
+                                        <img src={Wrench} alt="Wrench" />
+                                    </div>
+                                    <div className="text">
+                                        <div className="sensor_location">{sensor.location_unit}</div>
+                                        <div className="sensor_info">
+                                            센서 ID: {sensor.sensor_id} · 마지막 점검: {sensor.last_checked?.slice(0, 10)}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="item_right">원격 영점 조절</div>
                             </div>
-                        </div>
-                        <div className="item_right">원격 영점 조절</div>
-                    </div>
-                    <div className="item_list">
-                        <div className="item_left">
-                            <div className="icon">
-                                <img src={Wrench} alt="Wrench" />
-                            </div>
-                            <div className="text">
-                                <div className="sensor_location">C동 1505호</div>  {/* 추후 API 연동 예정 */}
-                                <div className="sensor_info">센서 ID: SN-C1505-01 · 마지막 점검: 2026.03.25</div>  {/* 추후 API 연동 예정 */}
-                            </div>
-                        </div>
-                        <div className="item_right">원격 영점 조절</div>
-                    </div>
+                        ))}
+                    </>
                 </div>
             </div>
             <div className="individualize">
@@ -210,7 +262,6 @@ const MyPage = () => {
                             </label>
                         </div>
                     </div>
-
                     {isAlarmBlocked && (
                         <>
                             <div className="divider"></div>
