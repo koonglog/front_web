@@ -11,6 +11,7 @@ import Check from "../../assets/img/ic_green_check.svg";
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats } from '../../api/dashboardApi';
+import { getSensorStatus } from '../../api/sensorApi';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -27,8 +28,13 @@ const Home = () => {
         completed_count: 0,
     });
 
+    const [offlineSensors, setOfflineSensors] = useState([]);
+    const [isSensorLoading, setIsSensorLoading] = useState(true);
+    const [isSensorError, setIsSensorError] = useState(false);
+
     const [isStatsLoading, setIsStatsLoading] = useState(true);
     const [isStatsError, setIsStatsError] = useState(false);
+    const [networkSensorId, setNetworkSensorId] = useState("");
 
     useEffect(() => {
         const fetchDashboardStats = async () => {
@@ -52,7 +58,41 @@ const Home = () => {
             }
         };
 
+        const fetchSensorStatus = async () => {
+            try {
+                const data = await getSensorStatus();
+                setNetworkSensorId(data.sensors?.[0]?.sensor_id ?? "");
+            } catch (error) {
+                console.error("센서 상태 조회 실패:", error);
+            }
+        };
+
         fetchDashboardStats();
+        fetchSensorStatus();
+    }, []);
+
+    useEffect(() => {
+        const fetchSensorStatus = async () => {
+            try {
+                setIsSensorLoading(true);
+                setIsSensorError(false);
+
+                const data = await getSensorStatus();
+
+                const offlineSensorList = (data.sensors ?? []).filter(
+                    (sensor) => sensor.is_online === false
+                );
+
+                setOfflineSensors(offlineSensorList);
+            } catch (error) {
+                console.error("홈 센서 상태 조회 실패:", error);
+                setIsSensorError(true);
+            } finally {
+                setIsSensorLoading(false);
+            }
+        };
+
+        fetchSensorStatus();
     }, []);
 
     const recentNotice = noticeItems[0];
@@ -195,12 +235,43 @@ const Home = () => {
                             <div className="caption">통신 끊김 센서</div>
                         </div>
                     </div>
-                    <div className="network_item">
-                        <div className="item_left">
-                            <div className="site_name">B동 803호</div>  {/* TODO: 이름은 API 연동 */}
-                            <div className="issue">센서 ID: SN-B803-01</div>  {/* TODO: 센서 ID는 API 연동 */}
-                        </div>
-                        <div className="item_right">즉시 점검</div>
+                    <div className="network_item_list">
+                        {isSensorLoading && (
+                            <div className="network_item">
+                                <div className="item_left">
+                                    <div className="site_name">센서 상태를 불러오는 중입니다.</div>
+                                    <div className="issue">잠시만 기다려주세요.</div>
+                                </div>
+                            </div>
+                        )}
+                        {isSensorError && (
+                            <div className="network_item">
+                                <div className="item_left">
+                                    <div className="site_name">센서 상태 조회 실패</div>
+                                    <div className="issue">네트워크 또는 서버 상태를 확인해주세요.</div>
+                                </div>
+                            </div>
+                        )}
+                        {!isSensorLoading && !isSensorError && offlineSensors.length === 0 && (
+                            <div className="network_item">
+                                <div className="item_left">
+                                    <div className="site_name">네트워크 장애 세대가 없습니다.</div>
+                                    <div className="issue">현재 모든 센서가 온라인 상태입니다.</div>
+                                </div>
+                                <div className="item_right">정상</div>
+                            </div>
+                        )}
+                        {!isSensorLoading && !isSensorError && offlineSensors.map((sensor) => (
+                            <div className="network_item" key={sensor.sensor_id}>
+                                <div className="item_left">
+                                    <div className="site_name">{sensor.location_unit}</div>
+                                    <div className="issue">
+                                        센서 ID: {sensor.sensor_id} · 배터리 {sensor.battery_level}%
+                                    </div>
+                                </div>
+                                <div className="item_right">즉시 점검</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="data_backup">
