@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Logo from "../../assets/img/ic_logo.svg";
 import HomeIcon from "../../assets/img/ic_blue_home.svg";
 import Warning from "../../assets/img/ic_red_warning.svg";
@@ -10,6 +10,7 @@ import Data from "../../assets/img/ic_green_database.svg";
 import Check from "../../assets/img/ic_green_check.svg";
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
+import { getDashboardStats } from '../../api/dashboardApi';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -18,10 +19,41 @@ const Home = () => {
     const recent_notice_number = 5;
     const rate_number = 87;
     const unconfirmed_number = 12;
-    const monitoring_number = 4;
-    const emergency_number = 2;
-    const today_total_number = 21;
-    const finished_action_number = 3;
+
+    const [dashboardStats, setDashboardStats] = useState({
+        total_households: 0,
+        urgent_households: 0,
+        today_noise_count: 0,
+        completed_count: 0,
+    });
+
+    const [isStatsLoading, setIsStatsLoading] = useState(true);
+    const [isStatsError, setIsStatsError] = useState(false);
+
+    useEffect(() => {
+        const fetchDashboardStats = async () => {
+            try {
+                setIsStatsLoading(true);
+                setIsStatsError(false);
+
+                const data = await getDashboardStats();
+
+                setDashboardStats({
+                    total_households: data.total_households ?? 0,
+                    urgent_households: data.urgent_households ?? 0,
+                    today_noise_count: data.today_noise_count ?? 0,
+                    completed_count: data.completed_count ?? 0,
+                });
+            } catch (error) {
+                console.error("홈 대시보드 통계 조회 실패:", error);
+                setIsStatsError(true);
+            } finally {
+                setIsStatsLoading(false);
+            }
+        };
+
+        fetchDashboardStats();
+    }, []);
 
     const recentNotice = noticeItems[0];
 
@@ -55,7 +87,7 @@ const Home = () => {
                             </div>
                             <div className="text">
                                 <div className="title">모니터링 세대</div>
-                                <div className="description">{monitoring_number}</div>
+                                <div className="description">{isStatsLoading ? "-" : dashboardStats.total_households}</div>
                             </div>
                         </div>
                         <div
@@ -67,7 +99,7 @@ const Home = () => {
                             </div>
                             <div className="text">
                                 <div className="title">긴급 대응 필요</div>
-                                <div className="description">{emergency_number}</div>
+                                <div className="description">{isStatsLoading ? "-" : dashboardStats.urgent_households}</div>
                             </div>
                         </div>
                     </div>
@@ -81,7 +113,7 @@ const Home = () => {
                             </div>
                             <div className="text">
                                 <div className="title">오늘 발생 소음 총합</div>
-                                <div className="description">{today_total_number}</div>
+                                <div className="description">{isStatsLoading ? "-" : dashboardStats.today_noise_count}</div>
                             </div>
                         </div>
                         <div
@@ -93,7 +125,7 @@ const Home = () => {
                             </div>
                             <div className="text">
                                 <div className="title">조치 완료</div>
-                                <div className="description">{finished_action_number}</div>
+                                <div className="description">{isStatsLoading ? "-" : dashboardStats.completed_count}</div>
                             </div>
                         </div>
                     </div>
