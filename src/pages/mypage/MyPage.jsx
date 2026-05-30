@@ -8,14 +8,23 @@ import Setting from "../../assets/img/ic_purple_setting.svg";
 import Goal from "../../assets/img/ic_orange_goal.svg";
 import Bell from "../../assets/img/ic_orange_bell.svg";
 import { getSensorStatus } from '../../api/sensorApi';
+import { getAdminProfile } from '../../api/authApi';
 
 const MyPage = () => {
     const [isAlarmBlocked, setIsAlarmBlocked] = useState(false);
 
-    const userName = "김관리";
-    const userJob = "관리소장";
+    const [adminProfile, setAdminProfile] = useState({
+        id: null,
+        username: "",
+        name: "",
+        role: "",
+        team: "",
+    });
+
+    const [isProfileLoading, setIsProfileLoading] = useState(true);
+    const [isProfileError, setIsProfileError] = useState(false);
+
     const location = "푸르지오 아파트 관리사무소";
-    const userId = "admin001";
     const signupDate = "2024.01.15";
     const authorityLevel = "Master";
     const authorityLevelKr = "최고 관리자";
@@ -30,6 +39,39 @@ const MyPage = () => {
 
     const [isSensorLoading, setIsSensorLoading] = useState(true);
     const [isSensorError, setIsSensorError] = useState(false);
+
+    useEffect(() => {
+        const fetchAdminProfile = async () => {
+            try {
+                setIsProfileLoading(true);
+                setIsProfileError(false);
+
+                const storedAdmin = JSON.parse(localStorage.getItem("admin"));
+                const adminId = storedAdmin?.id;
+
+                if (!adminId) {
+                    throw new Error("관리자 ID가 없습니다.");
+                }
+
+                const data = await getAdminProfile(adminId);
+
+                setAdminProfile({
+                    id: data.id ?? null,
+                    username: data.username ?? "",
+                    name: data.name ?? "",
+                    role: data.role ?? "",
+                    team: data.team ?? "",
+                });
+            } catch (error) {
+                console.error("관리자 프로필 조회 실패:", error);
+                setIsProfileError(true);
+            } finally {
+                setIsProfileLoading(false);
+            }
+        };
+
+        fetchAdminProfile();
+    }, []);
 
     useEffect(() => {
         const fetchSensorStatus = async () => {
@@ -72,12 +114,20 @@ const MyPage = () => {
                         <div className="profile">
                             <img src={MasterIcon} alt="MasterIcon" />
                         </div>
-                        <div className="user_name">{userName}</div>
-                        <div className="user_job">{userJob}</div>
-                        <div className="location">{location}</div>
+                        <div className="user_name">
+                            {isProfileLoading ? "불러오는 중" : isProfileError ? "정보 없음" : adminProfile.name}
+                        </div>
+                        <div className="user_job">
+                            {isProfileLoading ? "-" : isProfileError ? "-" : adminProfile.role}
+                        </div>
+                        <div className="location">
+                            {isProfileLoading ? "-" : isProfileError ? "-" : `${location} · ${adminProfile.team}`}
+                        </div>
                         <div className="divider"></div>
                         <div className="id_title">관리자 ID</div>
-                        <div className="user_id">{userId}</div>
+                        <div className="user_id">
+                            {isProfileLoading ? "-" : isProfileError ? "-" : adminProfile.username}
+                        </div>
                         <div className="date_title">가입일</div>
                         <div className="signup_date">{signupDate}</div>
                     </div>

@@ -14,3 +14,10 @@ export const logoutAdmin = async () => {
 
     return response.data;
 };
+
+// 관리자 프로필 조회
+export const getAdminProfile = async (adminId) => {
+    const response = await CustomAxios.get(`/api/v1/admin/profile/${adminId}`);
+
+    return response.data;
+};
