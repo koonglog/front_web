@@ -15,6 +15,31 @@ export const logoutAdmin = async () => {
     return response.data;
 };
 
+// 관리자 회원가입
+export const registerAdmin = async ({
+    email,
+    password,
+    name,
+    office_name,
+    office_address,
+    phone_number,
+    username,
+    role,
+}) => {
+    const response = await CustomAxios.post("/api/v1/auth/register", {
+        email,
+        password,
+        name,
+        office_name,
+        office_address,
+        phone_number,
+        username,
+        role,
+    });
+
+    return response.data;
+};
+
 // 관리자 프로필 조회
 export const getAdminProfile = async (adminId) => {
     const response = await CustomAxios.get(`/api/v1/admin/profile/${adminId}`);

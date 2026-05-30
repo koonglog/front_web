@@ -12,6 +12,7 @@ import Seek from "../../assets/img/ic_gray_seek.svg";
 import Checkbox from "../../assets/img/ic_checked.svg"
 import UnCheckbox from "../../assets/img/ic_unchecked.svg";
 import { useNavigate } from 'react-router-dom';
+import { registerAdmin } from '../../api/authApi';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -22,8 +23,16 @@ const SignUp = () => {
     const [isPasswordHide, setIsPasswordHide] = useState(true);
     const [isPasswordCheckHide, setIsPasswordCheckHide] = useState(true);
 
+    const [officeName, setOfficeName] = useState("");
+    const [officeAddress, setOfficeAddress] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+
     const [password, setPassword] = useState("");
     const [passwordCheck, setPasswordCheck] = useState("");
+
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const [agreeTerms, setAgreeTerms] = useState({
         use: false,
@@ -34,6 +43,56 @@ const SignUp = () => {
     const isAllAgreed = agreeTerms.use && agreeTerms.privacy && agreeTerms.approval;
 
     const authorityList = ["관리소장", "관리원", "기술팀", "보안팀"];
+
+    const handleRegister = async () => {
+        if (!officeName || !officeAddress || !name || !email || !password || !passwordCheck) {
+            setErrorMessage("모든 필수 정보를 입력해주세요.");
+            return;
+        }
+
+        if (password !== passwordCheck) {
+            setErrorMessage("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        if (!isAllAgreed) {
+            setErrorMessage("필수 약관에 모두 동의해주세요.");
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            setErrorMessage("");
+
+            const data = await registerAdmin({
+                email,
+                password,
+                name,
+                office_name: officeName,
+                office_address: officeAddress,
+                phone_number: "01000000000",  // 백엔드 API 수정 이후 제거 예정
+                username: email,  // 백엔드에 username의 쓰임 물어보고 수정 예정
+                role: selectedAuthority,
+            });
+
+            if (data.status === "success") {
+                alert("회원가입이 완료되었습니다. 로그인해주세요.");
+                navigate("/login");
+            } else {
+                setErrorMessage("회원가입에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("회원가입 실패:", error);
+
+            if (error.response?.data?.message) {
+                setErrorMessage(error.response.data.message);
+            } else {
+                setErrorMessage("회원가입 중 오류가 발생했습니다.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className='SignUp_Wrap'>
@@ -102,19 +161,37 @@ const SignUp = () => {
                         <div className="office_name">
                             <div className="title">관리사무소명</div>
                             <div className="name_input">
-                                <input type="text" placeholder='관리사무소 이름을 입력해주세요' className="office_name_input" />
+                                <input
+                                    type="text"
+                                    placeholder="관리사무소 이름을 입력해주세요"
+                                    className="office_name_input"
+                                    value={officeName}
+                                    onChange={(e) => setOfficeName(e.target.value)}
+                                />
                             </div>
                         </div>
                         <div className="office_address">
                             <div className="title">관리사무소 주소</div>
                             <div className="address_input">
-                                <input type="text" placeholder='관리사무소 주소를 입력해주세요' className="office_address_input" />
+                                <input
+                                    type="text"
+                                    placeholder="관리사무소 주소를 입력해주세요"
+                                    className="office_address_input"
+                                    value={officeAddress}
+                                    onChange={(e) => setOfficeAddress(e.target.value)}
+                                />
                             </div>
                         </div>
                         <div className="office_user_name">
                             <div className="title">담당자명</div>
                             <div className="name_input">
-                                <input type="text" placeholder='담당자의 이름을 입력해주세요' className="user_name_input" />
+                                <input
+                                    type="text"
+                                    placeholder="담당자의 이름을 입력해주세요"
+                                    className="user_name_input"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
                             </div>
                         </div>
                         <div className="office_user_authority">
@@ -156,7 +233,13 @@ const SignUp = () => {
                         <div className="office_email_input">
                             <div className="title">이메일</div>
                             <div className="email_input">
-                                <input type="email" placeholder='이메일을 입력해주세요' className="office_email_input" />
+                                <input
+                                    type="email"
+                                    placeholder="이메일을 입력해주세요"
+                                    className="office_email_input"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
                         </div>
                         <div className="office_pw_input">
@@ -208,6 +291,11 @@ const SignUp = () => {
                                 </div>
                             )}
                         </div>
+                        {errorMessage && (
+                            <div className="error_message">
+                                {errorMessage}
+                            </div>
+                        )}
                         <div className="divider"></div>
                         <div className="agree_section">
                             <div className="agree_item">
@@ -271,10 +359,11 @@ const SignUp = () => {
                         </div>
                         <button
                             type="button"
-                            className={`signup_btn ${isAllAgreed ? "active" : "disabled"}`}
-                            disabled={!isAllAgreed}
+                            className={`signup_btn ${isAllAgreed && !isLoading ? "active" : "disabled"}`}
+                            disabled={!isAllAgreed || isLoading}
+                            onClick={handleRegister}
                         >
-                            회원가입
+                            {isLoading ? "회원가입 중..." : "회원가입"}
                         </button>
                     </div>
                 </div>
