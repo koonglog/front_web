@@ -20,6 +20,11 @@ export const getDashboardStats = async () => {
     return response.data;
 };
 
+export const getPendingMediations = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/pending-mediations");
+    return response.data;
+};
+
 export const getHouseholdNoiseStats = async (householdId) => {
     const response = await CustomAxios.get(
         `/api/v1/households/${householdId}/noise-stats`

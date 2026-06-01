@@ -10,13 +10,12 @@ import Data from "../../assets/img/ic_green_database.svg";
 import Check from "../../assets/img/ic_green_check.svg";
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
-import { getDashboardStats } from '../../api/dashboardApi';
+import { getDashboardStats, getPendingMediations } from '../../api/dashboardApi';
 import { getSensorStatus } from '../../api/sensorApi';
 
 const Home = () => {
     const navigate = useNavigate();
 
-    const request_number = 3;
     const recent_notice_number = 5;
     const rate_number = 87;
     const unconfirmed_number = 12;
@@ -27,6 +26,14 @@ const Home = () => {
         today_noise_count: 0,
         completed_count: 0,
     });
+
+    const [pendingMediations, setPendingMediations] = useState({
+        pending_count: 0,
+        latest_request: null,
+    });
+
+    const [isPendingLoading, setIsPendingLoading] = useState(true);
+    const [isPendingError, setIsPendingError] = useState(false);
 
     const [offlineSensors, setOfflineSensors] = useState([]);
     const [isSensorLoading, setIsSensorLoading] = useState(true);
@@ -58,17 +65,27 @@ const Home = () => {
             }
         };
 
-        const fetchSensorStatus = async () => {
+        const fetchPendingMediations = async () => {
             try {
-                const data = await getSensorStatus();
-                setNetworkSensorId(data.sensors?.[0]?.sensor_id ?? "");
+                setIsPendingLoading(true);
+                setIsPendingError(false);
+
+                const data = await getPendingMediations();
+
+                setPendingMediations({
+                    pending_count: data.pending_count ?? 0,
+                    latest_request: data.latest_request ?? null,
+                });
             } catch (error) {
-                console.error("센서 상태 조회 실패:", error);
+                console.error("미결재 중재 요청 조회 실패:", error);
+                setIsPendingError(true);
+            } finally {
+                setIsPendingLoading(false);
             }
         };
 
         fetchDashboardStats();
-        fetchSensorStatus();
+        fetchPendingMediations();
     }, []);
 
     useEffect(() => {
@@ -113,8 +130,16 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="title">미결재 중재 요청</div>
-                    <div className="num">{request_number}건</div>
-                    <div className="holding">관리자 승인 대기 중</div>
+                    <div className="num">
+                        {isPendingLoading ? "-" : pendingMediations.pending_count}건
+                    </div>
+                    <div className="holding">
+                        {isPendingError
+                            ? "중재 요청 조회 실패"
+                            : pendingMediations.latest_request
+                                ? `${pendingMediations.latest_request.target_unit} 관리자 승인 대기 중`
+                                : "관리자 승인 대기 중"}
+                    </div>
                 </div>
                 <div className="top_right">
                     <div className="manage_info_top">
