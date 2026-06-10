@@ -8,7 +8,6 @@ import Edit from "../../assets/img/ic_white_edit.svg";
 import Network from "../../assets/img/ic_red_nowifi.svg";
 import Data from "../../assets/img/ic_green_database.svg";
 import Check from "../../assets/img/ic_green_check.svg";
-import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, getPendingMediations } from '../../api/dashboardApi';
 import { getDashboardNoticeSummary } from '../../api/noticeApi';
@@ -155,7 +154,6 @@ const Home = () => {
     const latestNoticeTitle = latestNotice?.title ?? "최근 발송된 공지가 없습니다.";
     const latestNoticeSentAt =
         latestNotice?.sent_at ??
-        latestNotice?.sentAt ??
         latestNotice?.created_at ??
         null;
     const latestNoticeReadRate =
@@ -164,7 +162,23 @@ const Home = () => {
         latestNotice?.readRate ??
         noticeSummary.avg_confirmation_rate;
 
-    const recentNotice = noticeItems[0];
+    const formatNoticeDate = (dateString) => {
+        if (!dateString) return "발송일 없음";
+
+        const date = new Date(dateString);
+
+        if (Number.isNaN(date.getTime())) {
+            return "발송일 없음";
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hour = String(date.getHours()).padStart(2, "0");
+        const minute = String(date.getMinutes()).padStart(2, "0");
+
+        return `${year}.${month}.${day} ${hour}:${minute}`;
+    };
 
     return (
         <div className='Home_Wrap'>
@@ -302,7 +316,7 @@ const Home = () => {
                                 {isNoticeSummaryError
                                     ? "네트워크 또는 서버 상태를 확인해주세요."
                                     : latestNotice
-                                        ? `${latestNoticeSentAt ?? "발송일 없음"} 발송 · 확인율 ${latestNoticeReadRate}%`
+                                        ? `${formatNoticeDate(latestNoticeSentAt)} 발송 · 확인율 ${latestNoticeReadRate}%`
                                         : "아직 발송된 공지가 없습니다."}
                             </div>
                         </div>
