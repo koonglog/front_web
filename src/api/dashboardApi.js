@@ -42,3 +42,8 @@ export const getDashboardTodayEvents = async () => {
     const response = await CustomAxios.get("/api/v1/dashboard/today-events");
     return response.data;
 };
+
+export const getDashboardCompleted = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/completed");
+    return response.data;
+};
