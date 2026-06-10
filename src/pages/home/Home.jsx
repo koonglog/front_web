@@ -11,14 +11,11 @@ import Check from "../../assets/img/ic_green_check.svg";
 import { noticeItems } from "../../mocks/noticeData";
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, getPendingMediations } from '../../api/dashboardApi';
+import { getDashboardNoticeSummary } from '../../api/noticeApi';
 import { getSensorStatus } from '../../api/sensorApi';
 
 const Home = () => {
     const navigate = useNavigate();
-
-    const recent_notice_number = 5;
-    const rate_number = 87;
-    const unconfirmed_number = 12;
 
     const [dashboardStats, setDashboardStats] = useState({
         total_households: 0,
@@ -34,6 +31,19 @@ const Home = () => {
 
     const [isPendingLoading, setIsPendingLoading] = useState(true);
     const [isPendingError, setIsPendingError] = useState(false);
+
+    const [noticeSummary, setNoticeSummary] = useState({
+        total_sent_count: 0,
+        recent_sent_count: 0,
+        recent_period_days: 7,
+        avg_confirmation_rate: 0,
+        unconfirmed_households: 0,
+        total_recipients: 0,
+        latest_notice: null,
+    });
+
+    const [isNoticeSummaryLoading, setIsNoticeSummaryLoading] = useState(true);
+    const [isNoticeSummaryError, setIsNoticeSummaryError] = useState(false);
 
     const [offlineSensors, setOfflineSensors] = useState([]);
     const [isSensorLoading, setIsSensorLoading] = useState(true);
@@ -89,6 +99,34 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
+        const fetchNoticeSummary = async () => {
+            try {
+                setIsNoticeSummaryLoading(true);
+                setIsNoticeSummaryError(false);
+
+                const data = (await getDashboardNoticeSummary()) ?? {};
+
+                setNoticeSummary({
+                    total_sent_count: data.total_sent_count ?? 0,
+                    recent_sent_count: data.recent_sent_count ?? 0,
+                    recent_period_days: data.recent_period_days ?? 7,
+                    avg_confirmation_rate: data.avg_confirmation_rate ?? 0,
+                    unconfirmed_households: data.unconfirmed_households ?? 0,
+                    total_recipients: data.total_recipients ?? 0,
+                    latest_notice: data.latest_notice ?? null,
+                });
+            } catch (error) {
+                console.error("홈 공지사항 요약 조회 실패:", error);
+                setIsNoticeSummaryError(true);
+            } finally {
+                setIsNoticeSummaryLoading(false);
+            }
+        };
+
+        fetchNoticeSummary();
+    }, []);
+
+    useEffect(() => {
         const fetchSensorStatus = async () => {
             try {
                 setIsSensorLoading(true);
@@ -111,6 +149,20 @@ const Home = () => {
 
         fetchSensorStatus();
     }, []);
+
+    const latestNotice = noticeSummary.latest_notice;
+    const latestNoticeId = latestNotice?.id ?? latestNotice?.notice_id ?? null;
+    const latestNoticeTitle = latestNotice?.title ?? "최근 발송된 공지가 없습니다.";
+    const latestNoticeSentAt =
+        latestNotice?.sent_at ??
+        latestNotice?.sentAt ??
+        latestNotice?.created_at ??
+        null;
+    const latestNoticeReadRate =
+        latestNotice?.confirmation_rate ??
+        latestNotice?.read_rate ??
+        latestNotice?.readRate ??
+        noticeSummary.avg_confirmation_rate;
 
     const recentNotice = noticeItems[0];
 
@@ -218,17 +270,23 @@ const Home = () => {
                 <div className="notice_info">
                     <div className="recent_notice">
                         <div className="title">최근 발송</div>
-                        <div className="recent_number">{recent_notice_number}건</div>
+                        <div className="recent_number">
+                            {isNoticeSummaryLoading ? "-" : noticeSummary.recent_sent_count}건
+                        </div>
                         <div className="caption">지난 7일</div>
                     </div>
                     <div className="average_confirm_rate">
                         <div className="title">평균 확인률</div>
-                        <div className="rate_number">{rate_number}%</div>
+                        <div className="rate_number">
+                            {isNoticeSummaryLoading ? "-" : noticeSummary.avg_confirmation_rate}%
+                        </div>
                         <div className="caption">전체 주민 기준</div>
                     </div>
                     <div className="unconfirmed_notice">
                         <div className="title">미확인 세대</div>
-                        <div className="unconfirmed_number">{unconfirmed_number}세대</div>
+                        <div className="unconfirmed_number">
+                            {isNoticeSummaryLoading ? "-" : noticeSummary.unconfirmed_households}세대
+                        </div>
                         <div className="caption">최근 공지 기준</div>
                     </div>
                 </div>
@@ -237,12 +295,20 @@ const Home = () => {
                     <div className="recent_title">최근 발송 공지</div>
                     <div className="notice_item">
                         <div className="notice_item_info">
-                            <div className="notice_title">{recentNotice.title}</div>
-                            <div className="notice_date">{recentNotice.sentAt} 발송 · 확인율 {recentNotice.readRate}%</div>
+                            <div className="notice_title">
+                                {isNoticeSummaryError ? "최근 공지 조회 실패" : latestNoticeTitle}
+                            </div>
+                            <div className="notice_date">
+                                {isNoticeSummaryError
+                                    ? "네트워크 또는 서버 상태를 확인해주세요."
+                                    : latestNotice
+                                        ? `${latestNoticeSentAt ?? "발송일 없음"} 발송 · 확인율 ${latestNoticeReadRate}%`
+                                        : "아직 발송된 공지가 없습니다."}
+                            </div>
                         </div>
                         <div
                             className="notice_item_go"
-                            onClick={() => navigate(`/notice/${recentNotice.id}`)}
+                            onClick={() => latestNoticeId && navigate(`/notice/${latestNoticeId}`)}
                         >
                             보기
                         </div>
