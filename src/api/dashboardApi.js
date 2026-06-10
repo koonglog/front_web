@@ -32,3 +32,8 @@ export const getHouseholdNoiseStats = async (householdId) => {
 
     return response.data;
 };
+
+export const getDashboardUrgent = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/urgent");
+    return response.data;
+};
