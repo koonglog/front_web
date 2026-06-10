@@ -202,9 +202,7 @@ const Home = () => {
                     <div className="holding">
                         {isPendingError
                             ? "중재 요청 조회 실패"
-                            : pendingMediations.latest_request
-                                ? `${pendingMediations.latest_request.target_unit} 관리자 승인 대기 중`
-                                : "관리자 승인 대기 중"}
+                            : "관리자 승인 대기 중"}
                     </div>
                 </div>
                 <div className="top_right">
