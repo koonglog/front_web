@@ -37,3 +37,8 @@ export const getDashboardUrgent = async () => {
     const response = await CustomAxios.get("/api/v1/dashboard/urgent");
     return response.data;
 };
+
+export const getDashboardTodayEvents = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/today-events");
+    return response.data;
+};
