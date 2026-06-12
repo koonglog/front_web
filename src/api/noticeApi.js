@@ -15,3 +15,8 @@ export const getNotices = async ({ noticeType = null, status = null } = {}) => {
 
     return response.data;
 };
+
+export const getNoticeDetail = async (noticeId) => {
+    const response = await CustomAxios.get(`/api/v1/notices/${noticeId}`);
+    return response.data;
+};
