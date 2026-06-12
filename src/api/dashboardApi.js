@@ -47,3 +47,8 @@ export const getDashboardCompleted = async () => {
     const response = await CustomAxios.get("/api/v1/dashboard/completed");
     return response.data;
 };
+
+export const getNoiseHotspot = async () => {
+    const response = await CustomAxios.get("/api/v1/noise/hotspot");
+    return response.data;
+};

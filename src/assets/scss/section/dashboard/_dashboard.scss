@@ -399,12 +399,19 @@
 
         .mapNfeed {
             display: flex;
+            width: 100%;
             gap: 24px;
+
+            .hotspot,
+            .realtime_feed {
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: calc((100% - 24px) / 2);
+            }
 
             .hotspot {
                 display: flex;
                 flex-direction: column;
-                flex: 1;
                 background-color: var(--white);
                 padding: 25px;
                 border-radius: 16px;
@@ -443,9 +450,106 @@
                 }
 
                 .hotspot_map {
-                    display: flex;
-                    justify-content: center;
+                    width: 100%;
+                    min-width: 0;
                     margin-bottom: 8px;
+                    overflow: hidden;
+
+                    .hotspot_status {
+                        width: 100%;
+                        padding: 42px 0;
+                        border-radius: 12px;
+                        background-color: var(--deepwhite);
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: var(--lightblack);
+                        text-align: center;
+                    }
+
+                    .hotspot_scroll_area {
+                        display: flex;
+                        align-items: flex-end;
+                        width: 100%;
+                        gap: 16px;
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                        padding: 16px 0px 5px;
+                        scroll-behavior: smooth;
+
+                        &::-webkit-scrollbar {
+                            height: 6px;
+                        }
+
+                        &::-webkit-scrollbar-thumb {
+                            background-color: var(--designgray);
+                            border-radius: 999px;
+                        }
+
+                        &::-webkit-scrollbar-track {
+                            background-color: transparent;
+                        }
+
+                        .hotspot_building_item {
+                            flex: 0 0 auto;
+                            min-width: 62px;
+                            height: fit-content;
+                            border-radius: 12px;
+                            border: 1px solid var(--designgray);
+                            background-color: var(--deepwhite);
+                            padding: 18px;
+
+                            .building_name {
+                                font-size: 16px;
+                                font-weight: 700;
+                                color: var(--lightblack);
+                                text-align: center;
+                            }
+
+                            .building_counts {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                gap: 8px;
+                                margin-top: 12px;
+
+                                .count_item {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 10px;
+
+                                    .circle {
+                                        width: 12px;
+                                        height: 12px;
+                                        border-radius: 50%;
+                                    }
+
+                                    .count_text {
+                                        font-size: 12px;
+                                        font-weight: 400;
+                                        color: var(--gray);
+                                    }
+                                }
+
+                                .count_item.urgent {
+                                    .circle {
+                                        background-color: var(--highlight);
+                                    }
+                                }
+
+                                .count_item.caution {
+                                    .circle {
+                                        background-color: var(--subcolor);
+                                    }
+                                }
+
+                                .count_item.normal {
+                                    .circle {
+                                        background-color: var(--gray);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 .divider {
@@ -522,7 +626,6 @@
             .realtime_feed {
                 display: flex;
                 flex-direction: column;
-                flex: 1;
                 padding: 25px;
                 background-color: var(--white);
                 border-radius: 16px;

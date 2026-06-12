@@ -15,7 +15,7 @@ import Clock from "../../assets/img/ic_gray_clock.svg";
 import Notice from "../../assets/img/ic_orange_notice.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
-import { getDashboardHourly, getDashboardStats } from '../../api/dashboardApi';
+import { getDashboardHourly, getDashboardStats, getNoiseHotspot } from '../../api/dashboardApi';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -58,6 +58,15 @@ const Dashboard = () => {
                 total: value.total ?? 0,
             }));
     };
+
+    const [hotspotBuildings, setHotspotBuildings] = useState([]);
+    const [hotspotLegend, setHotspotLegend] = useState({
+        urgent: "긴급 대응 필요",
+        caution: "관찰 필요",
+        normal: "정상",
+    });
+    const [isHotspotLoading, setIsHotspotLoading] = useState(true);
+    const [isHotspotError, setIsHotspotError] = useState(false);
 
     useEffect(() => {
         const fetchHourlyData = async () => {
@@ -105,6 +114,39 @@ const Dashboard = () => {
         fetchDashboardStats();
     }, []);
 
+    useEffect(() => {
+        const fetchNoiseHotspot = async () => {
+            try {
+                setIsHotspotLoading(true);
+                setIsHotspotError(false);
+
+                const data = (await getNoiseHotspot()) ?? {};
+
+                const buildings = Object.entries(data.buildings ?? {}).map(([name, value]) => ({
+                    name,
+                    urgent: value.urgent ?? 0,
+                    caution: value.caution ?? 0,
+                    normal: value.normal ?? 0,
+                    total: value.total ?? 0,
+                }));
+
+                setHotspotBuildings(buildings);
+                setHotspotLegend({
+                    urgent: data.legend?.urgent ?? "긴급 대응 필요",
+                    caution: data.legend?.caution ?? "관찰 필요",
+                    normal: data.legend?.normal ?? "정상",
+                });
+            } catch (error) {
+                console.error("갈등 핫스팟 맵 조회 실패:", error);
+                setIsHotspotError(true);
+            } finally {
+                setIsHotspotLoading(false);
+            }
+        };
+
+        fetchNoiseHotspot();
+    }, []);
+
     const maxHourlyTotal = Math.max(
         ...hourlyData.map((item) => item.total),
         1
@@ -113,6 +155,27 @@ const Dashboard = () => {
     const handleClickHourlyFilter = (option) => {
         setSelectedHourlyFilter(option);
         setIsHourlyFilterOpen(false);
+    };
+
+    const getHotspotStatus = (building) => {
+        if (building.urgent > 0) {
+            return {
+                className: "urgent",
+                label: hotspotLegend.urgent,
+            };
+        }
+
+        if (building.caution > 0) {
+            return {
+                className: "caution",
+                label: hotspotLegend.caution,
+            };
+        }
+
+        return {
+            className: "normal",
+            label: hotspotLegend.normal,
+        };
     };
 
     return (
@@ -210,8 +273,52 @@ const Dashboard = () => {
                             <div className="detail" onClick={() => navigate("/log-analysis")}>자세히 보기</div>
                         </div>
                         <div className="hotspot_map">
-                            핫스팟 맵이 있는 자리입니다.
-                        </div>  {/* 추후 API 연결 예정 */}
+                            {isHotspotLoading && (
+                                <div className="hotspot_status">핫스팟 맵을 불러오는 중입니다.</div>
+                            )}
+                            {isHotspotError && (
+                                <div className="hotspot_status">핫스팟 맵 조회에 실패했습니다.</div>
+                            )}
+                            {!isHotspotLoading && !isHotspotError && hotspotBuildings.length === 0 && (
+                                <div className="hotspot_status">표시할 핫스팟 데이터가 없습니다.</div>
+                            )}
+                            {!isHotspotLoading && !isHotspotError && hotspotBuildings.length > 0 && (
+                                <div className="hotspot_scroll_area">
+                                    {hotspotBuildings.map((building) => {
+                                        const status = getHotspotStatus(building);
+
+                                        return (
+                                            <div
+                                                className={`hotspot_building_item ${status.className}`}
+                                                key={building.name}
+                                            >
+                                                <div className="building_name">{building.name}</div>
+                                                <div className="building_counts">
+                                                    {building.urgent > 0 && (
+                                                        <div className="count_item urgent">
+                                                            <div className="circle"></div>
+                                                            <div className="count_text">{building.urgent}개</div>
+                                                        </div>
+                                                    )}
+                                                    {building.caution > 0 && (
+                                                        <div className="count_item caution">
+                                                            <div className="circle"></div>
+                                                            <div className="count_text">{building.caution}개</div>
+                                                        </div>
+                                                    )}
+                                                    {building.normal > 0 && (
+                                                        <div className="count_item normal">
+                                                            <div className="circle"></div>
+                                                            <div className="count_text">{building.normal}개</div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
                         <div className="divider"></div>
                         <div className="value_info">
                             <div className="emergency">
