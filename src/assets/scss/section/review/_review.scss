@@ -43,7 +43,7 @@
                 gap: 8px;
 
                 .pending,
-                .finished {
+                .completed {
                     padding: 12px 24px;
                     font-size: 14px;
                     font-weight: 600;
@@ -93,7 +93,7 @@
                             background-color: var(--backorange);
                         }
 
-                        &.finished {
+                        &.completed {
                             background-color: var(--lightgreen);
                         }
                     }
@@ -125,7 +125,7 @@
                                     background-color: var(--highlight);
                                 }
 
-                                &.finished {
+                                &.completed {
                                     background-color: var(--green);
                                 }
                             }
