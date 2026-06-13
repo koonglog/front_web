@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Cancel from "../../assets/img/ic_gray_cancel.svg";
 import Send from "../../assets/img/ic_white_send.svg";
 import { getHouseholdNoiseStats } from '../../api/dashboardApi';
-// import { messageTypes } from "../../mocks/dashboardData";
+import { createNotice } from '../../api/noticeApi';
 
 const messageTypes = [
     "긴급 알림",
@@ -11,10 +11,18 @@ const messageTypes = [
     "점검 안내",
 ];
 
+const messageTypeValueMap = {
+    "긴급 알림": "urgent_alert",
+    "일반 안내": "general_notice",
+    "생활 에티켓": "life_etiquette",
+    "점검 안내": "equipment_check",
+};
+
 const SendMessageModal = ({ householdId, receiverHouse, receiverName, onClose }) => {
     const [selectedType, setSelectedType] = useState("");
     const [messageTitle, setMessageTitle] = useState("");
     const [messageContent, setMessageContent] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [noiseStats, setNoiseStats] = useState({
         total_count: 0,
@@ -66,6 +74,49 @@ const SendMessageModal = ({ householdId, receiverHouse, receiverName, onClose })
         }
 
         return `오늘 감지: ${noiseStats.total_count}건 | 고강도: ${noiseStats.high_count}건 | 평균 지속: ${noiseStats.avg_duration_min}분`;
+    };
+
+    const handleSendMessage = async () => {
+        if (!householdId) {
+            alert("세대 정보가 없습니다.");
+            return;
+        }
+
+        if (!selectedType) {
+            alert("메시지 유형을 선택해주세요.");
+            return;
+        }
+
+        if (!messageTitle.trim()) {
+            alert("메시지 제목을 입력해주세요.");
+            return;
+        }
+
+        if (!messageContent.trim()) {
+            alert("메시지 내용을 입력해주세요.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            await createNotice({
+                title: messageTitle,
+                content: messageContent,
+                noticeType: messageTypeValueMap[selectedType] ?? selectedType,
+                targetType: "selected",
+                targetHouseholds: [String(householdId)],
+                scheduledAt: null,
+            });
+
+            alert("메시지가 발송되었습니다.");
+            onClose();
+        } catch (error) {
+            console.error("세대 메시지 발송 실패:", error);
+            alert("메시지 발송에 실패했습니다.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -129,11 +180,20 @@ const SendMessageModal = ({ householdId, receiverHouse, receiverName, onClose })
             <div className="divider"></div>
             <div className="buttons">
                 <div className="cancel_btn" onClick={onClose}>취소</div>
-                <div className="send_btn">
+                <div
+                    className="send_btn"
+                    onClick={() => {
+                        if (!isSubmitting) {
+                            handleSendMessage();
+                        }
+                    }}
+                >
                     <div className="icon">
                         <img src={Send} alt="Send" />
                     </div>
-                    <div className="text">메시지 발송</div>
+                    <div className="text">
+                        {isSubmitting ? "발송 중..." : "메시지 발송"}
+                    </div>
                 </div>
             </div>
         </div>
