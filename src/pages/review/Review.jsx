@@ -7,7 +7,7 @@ import Calendar from "../../assets/img/ic_gray_calendar.svg";
 import WhiteCheck from "../../assets/img/ic_white_check.svg";
 import GreenCheck from "../../assets/img/ic_green_check.svg";
 import Clock from "../../assets/img/ic_gray_clock.svg";
-import { getMediations } from '../../api/mediationApi';
+import { getMediations, updateMediation } from '../../api/mediationApi';
 
 const Review = () => {
     const [activeTab, setActiveTab] = useState("pending");
@@ -16,6 +16,7 @@ const Review = () => {
     const [completedItems, setCompletedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
+    const [updatingId, setUpdatingId] = useState(null);
 
     const hours = Array.from({ length: 24 }, (_, index) => index + 1);
 
@@ -49,6 +50,34 @@ const Review = () => {
         template: "템플릿",
         ai: "AI 생성",
         manual: "수동 작성",
+    };
+
+    const handleApproveMediation = async (item) => {
+        try {
+            setUpdatingId(item.id);
+
+            const updatedItem = await updateMediation(item.id, {
+                status: "completed",
+                aiMessage: item.ai_message ?? "",
+                residentMessage: item.resident_message ?? "",
+            });
+
+            setPendingItems((prev) =>
+                prev.filter((pendingItem) => pendingItem.id !== item.id)
+            );
+
+            setCompletedItems((prev) => [
+                updatedItem,
+                ...prev,
+            ]);
+
+            setActiveTab("completed");
+        } catch (error) {
+            console.error("중재 메시지 승인 실패:", error);
+            alert("중재 메시지 승인에 실패했습니다.");
+        } finally {
+            setUpdatingId(null);
+        }
     };
 
     const formatDateTime = (dateString) => {
@@ -267,11 +296,20 @@ const Review = () => {
                                             </div>
                                         </div>
                                         <div className="divider"></div>
-                                        <div className="approve_btn">
+                                        <div
+                                            className="approve_btn"
+                                            onClick={() => {
+                                                if (updatingId !== item.id) {
+                                                    handleApproveMediation(item);
+                                                }
+                                            }}
+                                        >
                                             <div className="icon">
                                                 <img src={WhiteCheck} alt="WhiteCheck" />
                                             </div>
-                                            <div className="text">AI 메시지 승인 및 발송</div>
+                                            <div className="text">
+                                                {updatingId === item.id ? "승인 처리 중..." : "AI 메시지 승인 및 발송"}
+                                            </div>
                                         </div>
                                     </>
                                 )}
