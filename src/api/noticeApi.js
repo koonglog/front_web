@@ -30,3 +30,23 @@ export const getAiNoticeTemplates = async () => {
     const response = await CustomAxios.get("/api/v1/notices/ai-template");
     return response.data;
 };
+
+export const createNotice = async ({
+    title,
+    content,
+    noticeType,
+    targetType,
+    targetHouseholds = [],
+    scheduledAt = null,
+}) => {
+    const response = await CustomAxios.post("/api/v1/notices", {
+        title,
+        content,
+        notice_type: noticeType,
+        target_type: targetType,
+        target_households: targetHouseholds,
+        scheduled_at: scheduledAt,
+    });
+
+    return response.data;
+};

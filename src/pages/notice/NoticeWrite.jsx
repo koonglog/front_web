@@ -14,7 +14,7 @@ import RedCancel from "../../assets/img/ic_red_cancel.svg";
 import { useNavigate } from 'react-router-dom';
 import AiTemplateModal from '../../components/notice/AiTemplateModal.jsx';
 import ScheduleSendModal from '../../components/notice/ScheduleSendModal.jsx';
-import { getHouseholdsByBuilding } from '../../api/noticeApi.js';
+import { createNotice, getHouseholdsByBuilding } from '../../api/noticeApi.js';
 
 const noticeTypes = [
     "긴급 알림",
@@ -22,6 +22,13 @@ const noticeTypes = [
     "생활 에티켓",
     "장비 점검 안내",
 ];
+
+const noticeTypeValueMap = {
+    "긴급 알림": "urgent_alert",
+    "일반 공지": "general_notice",
+    "생활 에티켓": "life_etiquette",
+    "장비 점검 안내": "equipment_check",
+};
 
 const NoticeWrite = () => {
     const navigate = useNavigate();
@@ -40,6 +47,7 @@ const NoticeWrite = () => {
     const [showTemplates, setShowTemplates] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [scheduledTime, setScheduledTime] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchHouseholdsByBuilding = async () => {
@@ -112,14 +120,72 @@ const NoticeWrite = () => {
         setShowTemplates(false);
     };
 
-    const handleScheduleSend = (time) => {
-        setScheduledTime(time);
+    const formatScheduledAt = (time) => {
+        if (!time) return null;
 
-        console.log("예약 발송 시간:", time);
-        console.log("공지 유형:", noticeType);
-        console.log("공지 제목:", noticeTitle);
-        console.log("공지 내용:", noticeContent);
-        console.log("발송 대상:", targetType === "all" ? "전체 세대" : selectedHouses);
+        const date = new Date(time);
+
+        if (Number.isNaN(date.getTime())) {
+            return time;
+        }
+
+        return date.toISOString();
+    };
+
+    const handleSubmitNotice = async (scheduledAt = null) => {
+        if (!noticeTitle.trim()) {
+            alert("공지 제목을 입력해주세요.");
+            return;
+        }
+
+        if (!noticeContent.trim()) {
+            alert("공지 내용을 입력해주세요.");
+            return;
+        }
+
+        if (!noticeType) {
+            alert("공지 유형을 선택해주세요.");
+            return;
+        }
+
+        if (targetType === "selected" && selectedHouses.length === 0) {
+            alert("발송할 세대를 선택해주세요.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            const targetHouseholds = targetType === "all"
+                ? []
+                : selectedHouses.map((house) => String(house.household_id));
+
+            await createNotice({
+                title: noticeTitle,
+                content: noticeContent,
+                noticeType: noticeTypeValueMap[noticeType] ?? noticeType,
+                targetType,
+                targetHouseholds,
+                scheduledAt,
+            });
+
+            alert(scheduledAt ? "공지 예약이 완료되었습니다." : "공지가 발송되었습니다.");
+            navigate("/notice");
+        } catch (error) {
+            console.error("공지 작성 실패:", error);
+            alert("공지 작성에 실패했습니다.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleScheduleSend = async (time) => {
+        const scheduledAt = formatScheduledAt(time);
+
+        setScheduledTime(scheduledAt);
+        setShowScheduleModal(false);
+
+        await handleSubmitNotice(scheduledAt);
     };
 
     return (
@@ -161,13 +227,13 @@ const NoticeWrite = () => {
                             <div className="caption">단지 내 모든 입주민</div>
                         </div>
                         <div
-                            className={`specific_btn ${targetType === "specific" ? "active" : ""}`}
-                            onClick={() => setTargetType("specific")}
+                            className={`selected ${targetType === "selected" ? "active" : ""}`}
+                            onClick={() => setTargetType("selected")}
                         >
                             <div className="tab_title">
                                 <div className="icon">
                                     <img
-                                        src={targetType === "specific" ? WhiteBuildings : BlackBuildings}
+                                        src={targetType === "selected" ? WhiteBuildings : BlackBuildings}
                                         alt="Buildings"
                                     />
                                 </div>
@@ -177,7 +243,7 @@ const NoticeWrite = () => {
                         </div>
                     </div>
                     <div className="divider"></div>
-                    {targetType === "specific" && (
+                    {targetType === "selected" && (
                         <div className="select_house_section">
                             <div className="title">발송할 세대 선택 (현재 {selectedHouses.length}개 세대 선택됨)</div>
                             <div className="stepone_section">
@@ -311,7 +377,14 @@ const NoticeWrite = () => {
                     </div>
                 </div>
                 <div className="buttons_box">
-                    <div className="send_now">
+                    <div
+                        className="send_now"
+                        onClick={() => {
+                            if (!isSubmitting) {
+                                handleSubmitNotice(null);
+                            }
+                        }}
+                    >
                         <div className="icon">
                             <img src={Send} alt="Send" />
                         </div>
@@ -319,7 +392,11 @@ const NoticeWrite = () => {
                     </div>
                     <div
                         className="send_later"
-                        onClick={() => setShowScheduleModal(true)}
+                        onClick={() => {
+                            if (!isSubmitting) {
+                                setShowScheduleModal(true);
+                            }
+                        }}
                     >
                         <div className="icon">
                             <img src={Clock} alt="Clock" />
