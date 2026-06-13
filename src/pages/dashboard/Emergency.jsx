@@ -121,7 +121,7 @@ const Emergency = () => {
                                             <div className="badge">즉시 대응 필요</div>
                                         </div>
                                         <div className="household_info">
-                                            세대 ID: {item.household_id} · {item.alias}
+                                            {item.resident_name ?? "-"} · {item.phone_number ?? "-"}
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ const Emergency = () => {
                                     ? `${selectedHousehold.building_name} ${selectedHousehold.unit_number}`
                                     : selectedHousehold.alias
                             }
-                            receiverName={selectedHousehold.alias}   // TODO: API 수정 후 이름으로 변경
+                            receiverName={selectedHousehold.resident_name}
                             onClose={() => setSelectedHousehold(null)}
                         />
                     </div>
