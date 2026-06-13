@@ -54,7 +54,43 @@ const Monitoring = () => {
     const formatLatestTime = (latestTime) => {
         if (!latestTime) return "-";
 
-        return latestTime;
+        const date = new Date(latestTime);
+
+        if (Number.isNaN(date.getTime())) {
+            return "-";
+        }
+
+        const year = String(date.getFullYear()).slice(2);
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hour = String(date.getHours()).padStart(2, "0");
+        const minute = String(date.getMinutes()).padStart(2, "0");
+
+        return `${year}.${month}.${day} ${hour}:${minute}`;
+    };
+
+    const formatBuildingName = (buildingName) => {
+        if (!buildingName) return "";
+
+        return buildingName.endsWith("동") ? buildingName : `${buildingName}동`;
+    };
+
+    const formatUnitNumber = (unitNumber) => {
+        if (!unitNumber) return "";
+
+        const unitText = String(unitNumber);
+
+        return unitText.endsWith("호") ? unitText : `${unitText}호`;
+    };
+
+    const getHouseholdName = (household) => {
+        if (!household) return "-";
+
+        if (household.building_name && household.unit_number) {
+            return `${formatBuildingName(household.building_name)} ${formatUnitNumber(household.unit_number)}`;
+        }
+
+        return household.alias ?? `세대 ${household.household_id}`;
     };
 
     return (
@@ -109,7 +145,7 @@ const Monitoring = () => {
                         <tbody>
                             {households.map((item) => (
                                 <tr key={item.household_id}>
-                                    <td className='text_bold'>{item.building_name} {item.unit_number}</td>
+                                    <td className='text_bold'>{getHouseholdName(item)}</td>
                                     <td className={getStatusClassName(item.status)}>{item.status_label}</td>
                                     <td>{item.resident_name}</td>
                                     <td>{item.phone_number}</td>
@@ -132,7 +168,7 @@ const Monitoring = () => {
                         <div onClick={(e) => e.stopPropagation()}>
                             <SendMessageModal
                                 householdId={selectedHousehold.household_id}
-                                receiverHouse={`${selectedHousehold.building_name} ${selectedHousehold.unit_number}`}
+                                receiverHouse={getHouseholdName(selectedHousehold)}
                                 receiverName={selectedHousehold.resident_name}
                                 onClose={() => setSelectedHousehold(null)}
                             />
