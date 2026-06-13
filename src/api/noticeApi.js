@@ -20,3 +20,8 @@ export const getNoticeDetail = async (noticeId) => {
     const response = await CustomAxios.get(`/api/v1/notices/${noticeId}`);
     return response.data;
 };
+
+export const getHouseholdsByBuilding = async () => {
+    const response = await CustomAxios.get("/api/v1/dashboard/households/by-building");
+    return response.data;
+};

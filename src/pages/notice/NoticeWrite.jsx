@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Back from "../../assets/img/ic_gray_back.svg";
 import Goal from "../../assets/img/ic_orange_goal.svg";
 import WhitePeople from "../../assets/img/ic_white_prople.svg";
@@ -13,9 +13,9 @@ import OrangeCheck from "../../assets/img/ic_orange_check.svg";
 import RedCancel from "../../assets/img/ic_red_cancel.svg";
 import { useNavigate } from 'react-router-dom';
 import { noticeTypes } from "../../mocks/noticeData.js";
-import { residentMockData } from '../../mocks/residentMockData.js';
 import AiTemplateModal from '../../components/notice/AiTemplateModal.jsx';
 import ScheduleSendModal from '../../components/notice/ScheduleSendModal.jsx';
+import { getHouseholdsByBuilding } from '../../api/noticeApi.js';
 
 const NoticeWrite = () => {
     const navigate = useNavigate();
@@ -23,6 +23,10 @@ const NoticeWrite = () => {
     const [targetType, setTargetType] = useState("all");
     const [selectedBuilding, setSelectedBuilding] = useState("A동");
     const [selectedHouses, setSelectedHouses] = useState([]);
+    const [householdsByBuilding, setHouseholdsByBuilding] = useState({});
+    const [buildingNames, setBuildingNames] = useState([]);
+    const [isHouseholdsLoading, setIsHouseholdsLoading] = useState(true);
+    const [isHouseholdsError, setIsHouseholdsError] = useState(false);
 
     const [noticeType, setNoticeType] = useState("");
     const [noticeTitle, setNoticeTitle] = useState("");
@@ -31,51 +35,67 @@ const NoticeWrite = () => {
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [scheduledTime, setScheduledTime] = useState("");
 
-    const buildings = [...new Set(residentMockData.map((resident) => resident.building))];
+    useEffect(() => {
+        const fetchHouseholdsByBuilding = async () => {
+            try {
+                setIsHouseholdsLoading(true);
+                setIsHouseholdsError(false);
 
-    const filteredResidents = residentMockData.filter(
-        (resident) => resident.building === selectedBuilding
-    );
+                const data = await getHouseholdsByBuilding();
+
+                const buildings = data.buildings ?? {};
+                const names = data.building_names ?? Object.keys(buildings);
+
+                setHouseholdsByBuilding(buildings);
+                setBuildingNames(names);
+
+                if (names.length > 0) {
+                    setSelectedBuilding(names[0]);
+                }
+            } catch (error) {
+                console.error("동별 세대 목록 조회 실패:", error);
+                setIsHouseholdsError(true);
+            } finally {
+                setIsHouseholdsLoading(false);
+            }
+        };
+
+        fetchHouseholdsByBuilding();
+    }, []);
+
+    const buildings = buildingNames;
+
+    const filteredResidents = householdsByBuilding[selectedBuilding] ?? [];
 
     const handleSelectHouse = (resident) => {
         const isSelected = selectedHouses.some(
-            (house) =>
-                house.building === resident.building &&
-                house.room === resident.room
+            (house) => house.household_id === resident.household_id
         );
 
         if (isSelected) {
             setSelectedHouses((prev) =>
-                prev.filter(
-                    (house) =>
-                        !(
-                            house.building === resident.building &&
-                            house.room === resident.room
-                        )
-                )
+                prev.filter((house) => house.household_id !== resident.household_id)
             );
         } else {
-            setSelectedHouses((prev) => [...prev, resident]);
+            setSelectedHouses((prev) => [
+                ...prev,
+                {
+                    ...resident,
+                    building: selectedBuilding,
+                },
+            ]);
         }
     };
 
     const handleRemoveHouse = (resident) => {
         setSelectedHouses((prev) =>
-            prev.filter(
-                (house) =>
-                    !(
-                        house.building === resident.building &&
-                        house.room === resident.room
-                    )
-            )
+            prev.filter((house) => house.household_id !== resident.household_id)
         );
     };
 
     const isHouseSelected = (resident) => {
         return selectedHouses.some(
-            (house) =>
-                house.building === resident.building &&
-                house.room === resident.room
+            (house) => house.household_id === resident.household_id
         );
     };
 
@@ -157,7 +177,13 @@ const NoticeWrite = () => {
                             <div className="stepone_section">
                                 <div className="step_title">1단계: 동 선택</div>
                                 <div className="select_section">
-                                    {buildings.map((building) => (
+                                    {isHouseholdsLoading && (
+                                        <div className="building_status">세대 목록을 불러오는 중입니다.</div>
+                                    )}
+                                    {isHouseholdsError && (
+                                        <div className="building_status">세대 목록 조회에 실패했습니다.</div>
+                                    )}
+                                    {!isHouseholdsLoading && !isHouseholdsError && buildings.map((building) => (
                                         <div
                                             key={building}
                                             className={`building_item ${selectedBuilding === building ? "active" : ""}`}
@@ -171,9 +197,15 @@ const NoticeWrite = () => {
                             <div className="steptwo_section">
                                 <div className="step_title">2단계: 호수 선택 (중복 선택 가능)</div>
                                 <div className="select_section">
-                                    {filteredResidents.map((resident) => (
+                                    {isHouseholdsLoading && (
+                                        <div className="house_status">세대 목록을 불러오는 중입니다.</div>
+                                    )}
+                                    {isHouseholdsError && (
+                                        <div className="house_status">세대 목록 조회에 실패했습니다.</div>
+                                    )}
+                                    {!isHouseholdsLoading && !isHouseholdsError && filteredResidents.map((resident) => (
                                         <div
-                                            key={`${resident.building}-${resident.room}`}
+                                            key={resident.household_id}
                                             className={`house_item ${isHouseSelected(resident) ? "active" : ""}`}
                                             onClick={() => handleSelectHouse(resident)}
                                         >
@@ -183,8 +215,8 @@ const NoticeWrite = () => {
                                                 </div>
                                             )}
                                             <div className="house_info">
-                                                <div className="room">{resident.room}</div>
-                                                <div className="name">{resident.name}</div>
+                                                <div className="room">{resident.unit_number}</div>
+                                                <div className="name">{resident.resident_name}</div>
                                             </div>
                                         </div>
                                     ))}
@@ -196,12 +228,11 @@ const NoticeWrite = () => {
                                     {selectedHouses.map((house) => (
                                         <div
                                             className="selected_house_item"
-                                            key={`${house.building}-${house.room}`}
+                                            key={house.household_id}
                                         >
                                             <span>
-                                                {house.building} {house.room}
+                                                {house.building} {house.unit_number}호
                                             </span>
-
                                             <div
                                                 className="remove_icon"
                                                 onClick={() => handleRemoveHouse(house)}
