@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import BackIcon from "../../assets/img/ic_gray_back.svg";
-// import { households } from "../../mocks/dashboardData";
 import Filter from "../../assets/img/ic_gray_filter.svg";
 import Message from "../../assets/img/ic_green_message.svg";
 import SendMessageModal from '../../components/dashboard/SendMessageModal';

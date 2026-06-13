@@ -61,107 +61,6 @@ const LogAnalysis = () => {
         return `${hour}:${minute}`;
     };
 
-    const formatThresholdData = (logs = [], filter) => {
-        const hours = getFilterHours(filter);
-        const now = new Date();
-
-        if (isOneHourFilter(filter)) {
-            const timeSlots = Array.from({ length: 12 }, (_, index) => {
-                const slotDate = new Date(now);
-                slotDate.setMinutes(now.getMinutes() - (11 - index) * 5);
-                slotDate.setSeconds(0);
-                slotDate.setMilliseconds(0);
-
-                const roundedMinute = Math.floor(slotDate.getMinutes() / 5) * 5;
-                slotDate.setMinutes(roundedMinute);
-
-                return {
-                    label: formatTimeLabel(slotDate),
-                    dayHouseholds: new Set(),
-                    nightHouseholds: new Set(),
-                };
-            });
-
-            logs.forEach((log) => {
-                if (!log.timestamp || !log.household_id) return;
-
-                const date = new Date(log.timestamp);
-
-                if (Number.isNaN(date.getTime())) return;
-
-                const roundedDate = new Date(date);
-                const roundedMinute = Math.floor(roundedDate.getMinutes() / 5) * 5;
-                roundedDate.setMinutes(roundedMinute);
-                roundedDate.setSeconds(0);
-                roundedDate.setMilliseconds(0);
-
-                const label = formatTimeLabel(roundedDate);
-                const targetSlot = timeSlots.find((slot) => slot.label === label);
-
-                if (!targetSlot) return;
-
-                const soundLevel = Number(log.sound_level ?? 0);
-
-                if (log.is_night && soundLevel >= 34) {
-                    targetSlot.nightHouseholds.add(log.household_id);
-                }
-
-                if (!log.is_night && soundLevel >= 39) {
-                    targetSlot.dayHouseholds.add(log.household_id);
-                }
-            });
-
-            return timeSlots.map((item) => ({
-                label: item.label,
-                dayCount: item.dayHouseholds.size,
-                nightCount: item.nightHouseholds.size,
-            }));
-        }
-
-        const hourSlots = Array.from({ length: hours }, (_, index) => {
-            const slotDate = new Date(now);
-            slotDate.setHours(now.getHours() - (hours - 1 - index));
-            slotDate.setMinutes(0);
-            slotDate.setSeconds(0);
-            slotDate.setMilliseconds(0);
-
-            return {
-                label: formatHourLabel(slotDate.getHours()),
-                dayHouseholds: new Set(),
-                nightHouseholds: new Set(),
-            };
-        });
-
-        logs.forEach((log) => {
-            if (!log.timestamp || !log.household_id) return;
-
-            const date = new Date(log.timestamp);
-
-            if (Number.isNaN(date.getTime())) return;
-
-            const label = formatHourLabel(date.getHours());
-            const targetSlot = hourSlots.find((slot) => slot.label === label);
-
-            if (!targetSlot) return;
-
-            const soundLevel = Number(log.sound_level ?? 0);
-
-            if (log.is_night && soundLevel >= 34) {
-                targetSlot.nightHouseholds.add(log.household_id);
-            }
-
-            if (!log.is_night && soundLevel >= 39) {
-                targetSlot.dayHouseholds.add(log.household_id);
-            }
-        });
-
-        return hourSlots.map((item) => ({
-            label: item.label,
-            dayCount: item.dayHouseholds.size,
-            nightCount: item.nightHouseholds.size,
-        }));
-    };
-
     const makeSummary = (items, logs = []) => {
         const nightMax = items.reduce(
             (max, item) => item.nightCount > max.nightCount ? item : max,
@@ -202,6 +101,107 @@ const LogAnalysis = () => {
     };
 
     useEffect(() => {
+        const formatThresholdData = (logs = [], filter) => {
+            const hours = getFilterHours(filter);
+            const now = new Date();
+
+            if (isOneHourFilter(filter)) {
+                const timeSlots = Array.from({ length: 12 }, (_, index) => {
+                    const slotDate = new Date(now);
+                    slotDate.setMinutes(now.getMinutes() - (11 - index) * 5);
+                    slotDate.setSeconds(0);
+                    slotDate.setMilliseconds(0);
+
+                    const roundedMinute = Math.floor(slotDate.getMinutes() / 5) * 5;
+                    slotDate.setMinutes(roundedMinute);
+
+                    return {
+                        label: formatTimeLabel(slotDate),
+                        dayHouseholds: new Set(),
+                        nightHouseholds: new Set(),
+                    };
+                });
+
+                logs.forEach((log) => {
+                    if (!log.timestamp || !log.household_id) return;
+
+                    const date = new Date(log.timestamp);
+
+                    if (Number.isNaN(date.getTime())) return;
+
+                    const roundedDate = new Date(date);
+                    const roundedMinute = Math.floor(roundedDate.getMinutes() / 5) * 5;
+                    roundedDate.setMinutes(roundedMinute);
+                    roundedDate.setSeconds(0);
+                    roundedDate.setMilliseconds(0);
+
+                    const label = formatTimeLabel(roundedDate);
+                    const targetSlot = timeSlots.find((slot) => slot.label === label);
+
+                    if (!targetSlot) return;
+
+                    const soundLevel = Number(log.sound_level ?? 0);
+
+                    if (log.is_night && soundLevel >= 34) {
+                        targetSlot.nightHouseholds.add(log.household_id);
+                    }
+
+                    if (!log.is_night && soundLevel >= 39) {
+                        targetSlot.dayHouseholds.add(log.household_id);
+                    }
+                });
+
+                return timeSlots.map((item) => ({
+                    label: item.label,
+                    dayCount: item.dayHouseholds.size,
+                    nightCount: item.nightHouseholds.size,
+                }));
+            }
+
+            const hourSlots = Array.from({ length: hours }, (_, index) => {
+                const slotDate = new Date(now);
+                slotDate.setHours(now.getHours() - (hours - 1 - index));
+                slotDate.setMinutes(0);
+                slotDate.setSeconds(0);
+                slotDate.setMilliseconds(0);
+
+                return {
+                    label: formatHourLabel(slotDate.getHours()),
+                    dayHouseholds: new Set(),
+                    nightHouseholds: new Set(),
+                };
+            });
+
+            logs.forEach((log) => {
+                if (!log.timestamp || !log.household_id) return;
+
+                const date = new Date(log.timestamp);
+
+                if (Number.isNaN(date.getTime())) return;
+
+                const label = formatHourLabel(date.getHours());
+                const targetSlot = hourSlots.find((slot) => slot.label === label);
+
+                if (!targetSlot) return;
+
+                const soundLevel = Number(log.sound_level ?? 0);
+
+                if (log.is_night && soundLevel >= 34) {
+                    targetSlot.nightHouseholds.add(log.household_id);
+                }
+
+                if (!log.is_night && soundLevel >= 39) {
+                    targetSlot.dayHouseholds.add(log.household_id);
+                }
+            });
+
+            return hourSlots.map((item) => ({
+                label: item.label,
+                dayCount: item.dayHouseholds.size,
+                nightCount: item.nightHouseholds.size,
+            }));
+        };
+
         const fetchRecentLogs = async () => {
             try {
                 setIsLoading(true);

@@ -49,14 +49,11 @@ const Home = () => {
     const [isSensorError, setIsSensorError] = useState(false);
 
     const [isStatsLoading, setIsStatsLoading] = useState(true);
-    const [isStatsError, setIsStatsError] = useState(false);
-    const [networkSensorId, setNetworkSensorId] = useState("");
 
     useEffect(() => {
         const fetchDashboardStats = async () => {
             try {
                 setIsStatsLoading(true);
-                setIsStatsError(false);
 
                 const data = await getDashboardStats();
 
@@ -68,7 +65,6 @@ const Home = () => {
                 });
             } catch (error) {
                 console.error("홈 대시보드 통계 조회 실패:", error);
-                setIsStatsError(true);
             } finally {
                 setIsStatsLoading(false);
             }

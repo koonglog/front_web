@@ -46,7 +46,6 @@ const NoticeWrite = () => {
     const [noticeContent, setNoticeContent] = useState("");
     const [showTemplates, setShowTemplates] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
-    const [scheduledTime, setScheduledTime] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -111,6 +110,20 @@ const NoticeWrite = () => {
         return selectedHouses.some(
             (house) => house.household_id === resident.household_id
         );
+    };
+
+    const formatBuildingName = (buildingName) => {
+        if (!buildingName) return "";
+
+        return buildingName.endsWith("동") ? buildingName : `${buildingName}동`;
+    };
+
+    const formatUnitNumber = (unitNumber) => {
+        if (!unitNumber) return "";
+
+        const unitText = String(unitNumber);
+
+        return unitText.endsWith("호") ? unitText : `${unitText}호`;
     };
 
     const handleApplyTemplate = (template) => {
@@ -182,7 +195,6 @@ const NoticeWrite = () => {
     const handleScheduleSend = async (time) => {
         const scheduledAt = formatScheduledAt(time);
 
-        setScheduledTime(scheduledAt);
         setShowScheduleModal(false);
 
         await handleSubmitNotice(scheduledAt);
@@ -303,7 +315,7 @@ const NoticeWrite = () => {
                                             key={house.household_id}
                                         >
                                             <span>
-                                                {house.building} {house.unit_number}호
+                                                {formatBuildingName(house.building)} {formatUnitNumber(house.unit_number)}
                                             </span>
                                             <div
                                                 className="remove_icon"

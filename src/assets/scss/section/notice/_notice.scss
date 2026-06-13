@@ -428,7 +428,8 @@
                     }
                 }
 
-                .specific_btn {
+                .specific_btn,
+                .selected {
                     display: flex;
                     flex: 1;
                     flex-direction: column;

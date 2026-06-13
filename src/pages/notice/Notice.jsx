@@ -11,13 +11,8 @@ const Notice = () => {
 
     const [notices, setNotices] = useState([]);
     const [total, setTotal] = useState(0);
-    const [noticeTypes, setNoticeTypes] = useState({});
-    const [statuses, setStatuses] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-
-    const [selectedNoticeType, setSelectedNoticeType] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState(null);
 
     useEffect(() => {
         const fetchNotices = async () => {
@@ -25,15 +20,10 @@ const Notice = () => {
                 setIsLoading(true);
                 setIsError(false);
 
-                const data = (await getNotices({
-                    noticeType: selectedNoticeType,
-                    status: selectedStatus,
-                })) ?? {};
+                const data = (await getNotices()) ?? {};
 
                 setNotices(data.notices ?? []);
                 setTotal(data.total ?? 0);
-                setNoticeTypes(data.notice_types ?? {});
-                setStatuses(data.statuses ?? {});
             } catch (error) {
                 console.error("공지사항 목록 조회 실패:", error);
                 setIsError(true);
@@ -43,7 +33,7 @@ const Notice = () => {
         };
 
         fetchNotices();
-    }, [selectedNoticeType, selectedStatus]);
+    }, []);
 
     const getBadgeClass = (noticeType) => {
         const badgeClassMap = {
