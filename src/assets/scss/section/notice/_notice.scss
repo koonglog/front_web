@@ -1164,6 +1164,21 @@
     border: 1px solid var(--designgray);
     padding: 24px;
 
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--designgray);
+        border-radius: 999px;
+    }
+
+    scrollbar-color: var(--designgray) transparent;
+
     .modal_title {
         display: flex;
         align-items: center;

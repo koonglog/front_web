@@ -25,3 +25,8 @@ export const getHouseholdsByBuilding = async () => {
     const response = await CustomAxios.get("/api/v1/dashboard/households/by-building");
     return response.data;
 };
+
+export const getAiNoticeTemplates = async () => {
+    const response = await CustomAxios.get("/api/v1/notices/ai-template");
+    return response.data;
+};

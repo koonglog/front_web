@@ -1,9 +1,44 @@
-import React from 'react';
-import { aiTemplates } from "../../mocks/noticeData.js";
+import React, { useEffect, useState } from 'react';
 import Close from "../../assets/img/ic_gray_cancel.svg";
 import Docs from "../../assets/img/ic_orange_docs.svg";
+import { getAiNoticeTemplates } from '../../api/noticeApi';
 
 const AiTemplateModal = ({ onClose, onApplyTemplate }) => {
+    const [aiTemplates, setAiTemplates] = useState([]);
+    const [isTemplatesLoading, setIsTemplatesLoading] = useState(true);
+    const [isTemplatesError, setIsTemplatesError] = useState(false);
+
+    useEffect(() => {
+        const fetchAiTemplates = async () => {
+            try {
+                setIsTemplatesLoading(true);
+                setIsTemplatesError(false);
+
+                const data = await getAiNoticeTemplates();
+
+                const templates = Object.values(data.all_templates ?? {})
+                    .flatMap((templateGroup) => templateGroup.templates ?? [])
+                    .map((template, index) => ({
+                        id: `${template.notice_type}-${index}`,
+                        title: template.title,
+                        content: template.content,
+                        type: template.notice_type_label,
+                        noticeType: template.notice_type,
+                        noticeTypeLabel: template.notice_type_label,
+                    }));
+
+                setAiTemplates(templates);
+            } catch (error) {
+                console.error("AI 템플릿 조회 실패:", error);
+                setIsTemplatesError(true);
+            } finally {
+                setIsTemplatesLoading(false);
+            }
+        };
+
+        fetchAiTemplates();
+    }, []);
+
     const getTemplateTypeClass = (type) => {
         switch (type) {
             case "긴급 알림":
@@ -35,7 +70,16 @@ const AiTemplateModal = ({ onClose, onApplyTemplate }) => {
             </div>
             <div className="divider"></div>
             <div className="template_list">
-                {aiTemplates.map((template) => (
+                {isTemplatesLoading && (
+                    <div className="template_status">AI 템플릿을 불러오는 중입니다.</div>
+                )}
+                {isTemplatesError && (
+                    <div className="template_status">AI 템플릿 조회에 실패했습니다.</div>
+                )}
+                {!isTemplatesLoading && !isTemplatesError && aiTemplates.length === 0 && (
+                    <div className="template_status">사용 가능한 AI 템플릿이 없습니다.</div>
+                )}
+                {!isTemplatesLoading && !isTemplatesError && aiTemplates.map((template) => (
                     <div className="template_item" key={template.id}>
                         <div className="template_info">
                             <div className="title_text">

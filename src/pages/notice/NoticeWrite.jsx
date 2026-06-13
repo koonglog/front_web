@@ -12,10 +12,16 @@ import Clock from "../../assets/img/ic_gray_clock.svg";
 import OrangeCheck from "../../assets/img/ic_orange_check.svg";
 import RedCancel from "../../assets/img/ic_red_cancel.svg";
 import { useNavigate } from 'react-router-dom';
-import { noticeTypes } from "../../mocks/noticeData.js";
 import AiTemplateModal from '../../components/notice/AiTemplateModal.jsx';
 import ScheduleSendModal from '../../components/notice/ScheduleSendModal.jsx';
 import { getHouseholdsByBuilding } from '../../api/noticeApi.js';
+
+const noticeTypes = [
+    "긴급 알림",
+    "일반 공지",
+    "생활 에티켓",
+    "장비 점검 안내",
+];
 
 const NoticeWrite = () => {
     const navigate = useNavigate();
