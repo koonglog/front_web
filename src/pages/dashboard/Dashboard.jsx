@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import RedSound from "../../assets/img/ic_red_sound.svg";
+import OrangeSound from "../../assets/img/ic_orange_sound.svg";
+import BlueSound from "../../assets/img/ic_blue_sound.svg";
 import Search from "../../assets/img/ic_gray_search.svg";
 import HomeIcon from "../../assets/img/ic_blue_home.svg";
 import Warning from "../../assets/img/ic_red_warning.svg";
@@ -7,15 +10,12 @@ import Check from "../../assets/img/ic_green_check.svg";
 import ChevronDown from "../../assets/img/ic_chevron_down.svg";
 import ChevronUp from "../../assets/img/ic_chevron_up.svg";
 import Message from "../../assets/img/ic_green_message.svg";
-import {
-    households,
-    feedItems,
-} from "../../mocks/dashboardData";
+import { households } from "../../mocks/dashboardData";
 import Clock from "../../assets/img/ic_gray_clock.svg";
 import Notice from "../../assets/img/ic_orange_notice.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
-import { getDashboardHourly, getDashboardStats, getNoiseHotspot } from '../../api/dashboardApi';
+import { getDashboardHourly, getDashboardStats, getNoiseHotspot, getRecentNoiseLogs } from '../../api/dashboardApi';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -147,12 +147,34 @@ const Dashboard = () => {
         fetchNoiseHotspot();
     }, []);
 
+    useEffect(() => {
+        const fetchRecentNoiseLogs = async () => {
+            try {
+                setIsRecentNoiseLogsLoading(true);
+                setIsRecentNoiseLogsError(false);
+
+                const data = await getRecentNoiseLogs();
+
+                setRecentNoiseLogs(data.logs ?? []);
+            } catch (error) {
+                console.error("최근 소음 로그 조회 실패:", error);
+                setIsRecentNoiseLogsError(true);
+            } finally {
+                setIsRecentNoiseLogsLoading(false);
+            }
+        };
+
+        fetchRecentNoiseLogs();
+    }, []);
+
     const maxHourlyTotal = Math.max(
         ...hourlyData.map((item) => item.total),
         1
     );
 
-    const handleClickHourlyFilter = (option) => {
+    const handleClickHourlyFilter = (event, option) => {
+        event.stopPropagation();
+
         setSelectedHourlyFilter(option);
         setIsHourlyFilterOpen(false);
     };
@@ -176,6 +198,79 @@ const Dashboard = () => {
             className: "normal",
             label: hotspotLegend.normal,
         };
+    };
+
+    const [recentNoiseLogs, setRecentNoiseLogs] = useState([]);
+    const [isRecentNoiseLogsLoading, setIsRecentNoiseLogsLoading] = useState(true);
+    const [isRecentNoiseLogsError, setIsRecentNoiseLogsError] = useState(false);
+
+    const getEventTypeLabel = (eventType) => {
+        switch (eventType) {
+            case "impact_noise":
+                return "충격음";
+            case "daily_noise":
+                return "생활 소음";
+            case "background_noise":
+                return "배경 소음";
+            default:
+                return "소음 이벤트";
+        }
+    };
+
+    const getSeverityLabel = (severity) => {
+        switch (severity) {
+            case "high":
+                return "높음";
+            case "medium":
+                return "보통";
+            case "low":
+                return "낮음";
+            default:
+                return "알 수 없음";
+        }
+    };
+
+    const getSeverityIconClass = (severity) => {
+        switch (severity) {
+            case "high":
+                return "icon_red";
+            case "medium":
+                return "icon_orange";
+            case "low":
+                return "icon_blue";
+            default:
+                return "icon_blue";
+        }
+    };
+
+    const getSeverityIcon = (severity) => {
+        switch (severity) {
+            case "high":
+                return RedSound;
+            case "medium":
+                return OrangeSound;
+            case "low":
+                return BlueSound;
+            default:
+                return BlueSound;
+        }
+    };
+
+    const formatTimestamp = (timestamp) => {
+        if (!timestamp) return "-";
+
+        const date = new Date(timestamp);
+
+        if (Number.isNaN(date.getTime())) {
+            return "-";
+        }
+
+        return date.toLocaleString("ko-KR", {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
     };
 
     return (
@@ -341,17 +436,37 @@ const Dashboard = () => {
                             <div className="caption">최근 감지된 이벤트</div>
                         </div>
                         <div className="feed_lists">
-                            {feedItems.map((item, index) => (
-                                <div className="feed_item" key={`${item.house}-${item.issue}-${index}`}>
-                                    <div className={item.iconClass}>
-                                        <img src={item.icon} alt={item.issue} />
+                            {isRecentNoiseLogsLoading && (
+                                <div className="feed_status">최근 이벤트를 불러오는 중입니다.</div>
+                            )}
+                            {isRecentNoiseLogsError && (
+                                <div className="feed_status">최근 이벤트 조회에 실패했습니다.</div>
+                            )}
+                            {!isRecentNoiseLogsLoading && !isRecentNoiseLogsError && recentNoiseLogs.length === 0 && (
+                                <div className="feed_status">최근 감지된 이벤트가 없습니다.</div>
+                            )}
+                            {!isRecentNoiseLogsLoading && !isRecentNoiseLogsError && recentNoiseLogs.map((item) => {
+                                const eventTypeLabel = getEventTypeLabel(item.event_type);
+                                const severityLabel = getSeverityLabel(item.severity);
+                                const severityIconClass = getSeverityIconClass(item.severity);
+                                const severityIcon = getSeverityIcon(item.severity);
+
+                                return (
+                                    <div className="feed_item" key={item.id}>
+                                        <div className={severityIconClass}>
+                                            <img src={severityIcon} alt={eventTypeLabel} />
+                                        </div>
+                                        <div className="text">
+                                            <div className="feed_info">
+                                                세대 {item.household_id}: {eventTypeLabel}
+                                            </div>
+                                            <div className="detail">
+                                                {item.sound_level}dB · {severityLabel} · {formatTimestamp(item.timestamp)}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="text">
-                                        <div className="feed_info">{item.house}: {item.issue}</div>
-                                        <div className="detail">{item.detail}</div>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -378,7 +493,7 @@ const Dashboard = () => {
                                         <div
                                             key={option.value}
                                             className={`dropdown_item ${selectedHourlyFilter.value === option.value ? "active" : ""}`}
-                                            onClick={() => handleClickHourlyFilter(option)}
+                                            onClick={(event) => handleClickHourlyFilter(event, option)}
                                         >
                                             {option.label}
                                         </div>
@@ -424,7 +539,9 @@ const Dashboard = () => {
                                                         }}
                                                     ></div>
                                                 </div>
-                                                <div className="hour_label">{item.hour}시</div>
+                                                <div className="hour_label">
+                                                    {selectedHourlyFilter.value === 1 ? item.hour : `${item.hour}시`}
+                                                </div>
                                             </div>
                                         );
                                     })}

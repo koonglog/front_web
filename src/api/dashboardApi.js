@@ -52,3 +52,8 @@ export const getNoiseHotspot = async () => {
     const response = await CustomAxios.get("/api/v1/noise/hotspot");
     return response.data;
 };
+
+export const getRecentNoiseLogs = async () => {
+    const response = await CustomAxios.get("/api/v1/noise-logs/recent");
+    return response.data;
+};

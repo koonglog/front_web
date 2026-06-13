@@ -667,8 +667,8 @@
                         gap: 12px;
 
                         .icon_red {
-                            width: 32px;
-                            height: 32px;
+                            width: 16px;
+                            height: 16px;
                             background-color: var(--lightred);
                             border-radius: 8px;
                             padding: 8px;
@@ -681,9 +681,23 @@
                         }
 
                         .icon_orange {
-                            width: 32px;
-                            height: 32px;
+                            width: 16px;
+                            height: 16px;
                             background-color: #FFEDD4;
+                            border-radius: 8px;
+                            padding: 8px;
+
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: contain;
+                            }
+                        }
+
+                        .icon_blue {
+                            width: 16px;
+                            height: 16px;
+                            background-color: var(--lightblue);
                             border-radius: 8px;
                             padding: 8px;
 
