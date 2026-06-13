@@ -273,6 +273,14 @@ const Dashboard = () => {
         });
     };
 
+    const getHouseholdName = (item) => {
+        if (item.building_name && item.unit_number) {
+            return `${item.building_name} ${item.unit_number}`;
+        }
+
+        return item.alias ?? `세대 ${item.household_id}`;
+    };
+
     return (
         <div className='Dashboard_Wrap'>
             <aside className='dashboard_aside'>
@@ -458,7 +466,7 @@ const Dashboard = () => {
                                         </div>
                                         <div className="text">
                                             <div className="feed_info">
-                                                세대 {item.household_id}: {eventTypeLabel}
+                                                {getHouseholdName(item)}: {eventTypeLabel}
                                             </div>
                                             <div className="detail">
                                                 {item.sound_level}dB · {severityLabel} · {formatTimestamp(item.timestamp)}
