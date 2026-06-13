@@ -10,12 +10,17 @@ import Check from "../../assets/img/ic_green_check.svg";
 import ChevronDown from "../../assets/img/ic_chevron_down.svg";
 import ChevronUp from "../../assets/img/ic_chevron_up.svg";
 import Message from "../../assets/img/ic_green_message.svg";
-import { households } from "../../mocks/dashboardData";
 import Clock from "../../assets/img/ic_gray_clock.svg";
 import Notice from "../../assets/img/ic_orange_notice.svg";
 import { useNavigate } from 'react-router-dom';
 import SendMessageModal from '../../components/dashboard/SendMessageModal';
-import { getDashboardHourly, getDashboardStats, getNoiseHotspot, getRecentNoiseLogs } from '../../api/dashboardApi';
+import {
+    getDashboardHouseholds,
+    getDashboardHourly,
+    getDashboardStats,
+    getNoiseHotspot,
+    getRecentNoiseLogs,
+} from '../../api/dashboardApi';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -27,7 +32,11 @@ const Dashboard = () => {
         { label: "최근 1시간", value: 1 },
     ];
 
-    const [selectedHousehold, setSelectedHousehold] = useState(households[0]);
+    const [dashboardHouseholds, setDashboardHouseholds] = useState([]);
+    const [selectedHousehold, setSelectedHousehold] = useState(null);
+    const [householdSearch, setHouseholdSearch] = useState("");
+    const [isHouseholdsLoading, setIsHouseholdsLoading] = useState(true);
+    const [isHouseholdsError, setIsHouseholdsError] = useState(false);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
     const [dashboardStats, setDashboardStats] = useState({
@@ -167,6 +176,42 @@ const Dashboard = () => {
         fetchRecentNoiseLogs();
     }, []);
 
+    useEffect(() => {
+        const fetchDashboardHouseholds = async () => {
+            try {
+                setIsHouseholdsLoading(true);
+                setIsHouseholdsError(false);
+
+                const data = await getDashboardHouseholds({
+                    search: householdSearch.trim() || null,
+                });
+
+                const households = data.households ?? [];
+
+                setDashboardHouseholds(households);
+
+                setSelectedHousehold((prev) => {
+                    if (!prev) return households[0] ?? null;
+
+                    const stillExists = households.find(
+                        (household) => household.household_id === prev.household_id
+                    );
+
+                    return stillExists ?? households[0] ?? null;
+                });
+            } catch (error) {
+                console.error("대시보드 세대 목록 조회 실패:", error);
+                setIsHouseholdsError(true);
+            } finally {
+                setIsHouseholdsLoading(false);
+            }
+        };
+
+        const timer = setTimeout(fetchDashboardHouseholds, 300);
+
+        return () => clearTimeout(timer);
+    }, [householdSearch]);
+
     const maxHourlyTotal = Math.max(
         ...hourlyData.map((item) => item.total),
         1
@@ -203,6 +248,38 @@ const Dashboard = () => {
     const [recentNoiseLogs, setRecentNoiseLogs] = useState([]);
     const [isRecentNoiseLogsLoading, setIsRecentNoiseLogsLoading] = useState(true);
     const [isRecentNoiseLogsError, setIsRecentNoiseLogsError] = useState(false);
+
+    const [selectedHouseholdLogs, setSelectedHouseholdLogs] = useState([]);
+    const [isSelectedLogsLoading, setIsSelectedLogsLoading] = useState(false);
+    const [isSelectedLogsError, setIsSelectedLogsError] = useState(false);
+
+    useEffect(() => {
+        const fetchSelectedHouseholdLogs = async () => {
+            if (!selectedHousehold?.household_id) {
+                setSelectedHouseholdLogs([]);
+                return;
+            }
+
+            try {
+                setIsSelectedLogsLoading(true);
+                setIsSelectedLogsError(false);
+
+                const data = await getRecentNoiseLogs({
+                    householdId: selectedHousehold.household_id,
+                    limit: 3,
+                });
+
+                setSelectedHouseholdLogs(data.logs ?? []);
+            } catch (error) {
+                console.error("선택 세대 최근 이벤트 조회 실패:", error);
+                setIsSelectedLogsError(true);
+            } finally {
+                setIsSelectedLogsLoading(false);
+            }
+        };
+
+        fetchSelectedHouseholdLogs();
+    }, [selectedHousehold?.household_id]);
 
     const getEventTypeLabel = (eventType) => {
         switch (eventType) {
@@ -281,6 +358,141 @@ const Dashboard = () => {
         return item.alias ?? `세대 ${item.household_id}`;
     };
 
+    const formatBuildingName = (buildingName) => {
+        if (!buildingName) return "";
+
+        return buildingName.endsWith("동") ? buildingName : `${buildingName}동`;
+    };
+
+    const formatUnitNumber = (unitNumber) => {
+        if (!unitNumber) return "";
+
+        const unitText = String(unitNumber);
+
+        return unitText.endsWith("호") ? unitText : `${unitText}호`;
+    };
+
+    const getDashboardHouseholdName = (household) => {
+        if (!household) return "-";
+
+        if (household.building_name && household.unit_number) {
+            return `${formatBuildingName(household.building_name)} ${formatUnitNumber(household.unit_number)}`;
+        }
+
+        return household.alias ?? `세대 ${household.household_id}`;
+    };
+
+    const getStatusCircleClass = (status) => {
+        switch (status) {
+            case "urgent":
+                return "circle_high";
+            case "caution":
+                return "circle_middle";
+            case "normal":
+                return "circle_low";
+            default:
+                return "circle_low";
+        }
+    };
+
+    const getStatusBadgeClass = (status) => {
+        switch (status) {
+            case "urgent":
+                return "badge_high";
+            case "caution":
+                return "badge_middle";
+            case "normal":
+                return "badge_low";
+            default:
+                return "badge_low";
+        }
+    };
+
+    const getLatestTimeText = (household) => {
+        if (!household?.latest_time) return "-";
+
+        const date = new Date(household.latest_time);
+
+        if (Number.isNaN(date.getTime())) return "-";
+
+        return date.toLocaleTimeString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+    };
+
+    const getEventIconClass = (severity) => {
+        switch (severity) {
+            case "high":
+                return "icon_red";
+            case "medium":
+                return "icon_orange";
+            case "low":
+                return "icon_green";
+            default:
+                return "icon_green";
+        }
+    };
+
+    const getEventIcon = (severity) => {
+        switch (severity) {
+            case "high":
+                return RedSound;
+            case "medium":
+                return OrangeSound;
+            case "low":
+                return BlueSound;
+            default:
+                return BlueSound;
+        }
+    };
+
+    const getEventIntensityClass = (severity) => {
+        switch (severity) {
+            case "high":
+                return "red";
+            case "medium":
+                return "orange";
+            case "low":
+                return "green";
+            default:
+                return "green";
+        }
+    };
+
+    const formatEventTime = (timestamp) => {
+        if (!timestamp) return "-";
+
+        const date = new Date(timestamp);
+
+        if (Number.isNaN(date.getTime())) return "-";
+
+        const hour = String(date.getHours()).padStart(2, "0");
+        const minute = String(date.getMinutes()).padStart(2, "0");
+
+        return `${hour}:${minute}`;
+    };
+
+    const getRecentNoiseTimeText = () => {
+        if (selectedHouseholdLogs.length === 0) {
+            return "-";
+        }
+
+        return formatEventTime(selectedHouseholdLogs[0].timestamp);
+    };
+
+    const formatDuration = (durationMs) => {
+        const seconds = Math.round((durationMs ?? 0) / 1000);
+
+        if (seconds < 60) {
+            return `${seconds}초`;
+        }
+
+        const minutes = Math.round(seconds / 60);
+        return `${minutes}분`;
+    };
+
     return (
         <div className='Dashboard_Wrap'>
             <aside className='dashboard_aside'>
@@ -289,26 +501,64 @@ const Dashboard = () => {
                     <div className="icon">
                         <img src={Search} alt="Search" />
                     </div>
-                    <input type="search" placeholder="동/호수 검색" name="aside_search" id="aside_search" />
+                    <input
+                        type="search"
+                        placeholder="동/호수 검색"
+                        name="aside_search"
+                        id="aside_search"
+                        value={householdSearch}
+                        onChange={(event) => setHouseholdSearch(event.target.value)}
+                    />
                 </div>
                 <div className="aside_lists">
-                    {households.map((item) => (
+                    {isHouseholdsLoading && (
+                        <div className="household_item">
+                            <div className="household_info">
+                                <div className="location">
+                                    <div className="text">세대 목록을 불러오는 중입니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {isHouseholdsError && (
+                        <div className="household_item">
+                            <div className="household_info">
+                                <div className="location">
+                                    <div className="text">세대 목록 조회 실패</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {!isHouseholdsLoading && !isHouseholdsError && dashboardHouseholds.length === 0 && (
+                        <div className="household_item">
+                            <div className="household_info">
+                                <div className="location">
+                                    <div className="text">검색 결과가 없습니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {!isHouseholdsLoading && !isHouseholdsError && dashboardHouseholds.map((item) => (
                         <div
-                            key={item.house}
-                            className={selectedHousehold.house === item.house ? "household_item_selected" : "household_item"}
+                            key={item.household_id}
+                            className={
+                                selectedHousehold?.household_id === item.household_id
+                                    ? "household_item_selected"
+                                    : "household_item"
+                            }
                             onClick={() => setSelectedHousehold(item)}
                         >
                             <div className="household_info">
                                 <div className="location">
-                                    <div className="text">{item.house}</div>
-                                    <div className={`circle ${item.circleClass}`}></div>
+                                    <div className="text">{getDashboardHouseholdName(item)}</div>
+                                    <div className={`circle ${getStatusCircleClass(item.status)}`}></div>
                                 </div>
-                                <div className="time">{item.time}</div>
+                                <div className="time">{getLatestTimeText(item)}</div>
                             </div>
                             <div className="household_log">
-                                <div className="event_number">오늘 {item.today}</div>
+                                <div className="event_number">오늘 {item.today_count ?? 0}건</div>
                                 <div className="high_intensity">
-                                    {item.high !== "0건" ? `고강도 ${item.high.replace("건", "")}` : ""}
+                                    {(item.high_count ?? 0) > 0 ? `고강도 ${item.high_count}` : ""}
                                 </div>
                             </div>
                         </div>
@@ -558,95 +808,154 @@ const Dashboard = () => {
                         )}
                     </div>
                 </div>
-                <div className="household_analysis">
-                    <div className="household_title">
-                        <div className="title_left">
-                            <div className="title">
-                                <div className="location">{selectedHousehold.house}</div>
-                                <div className={`badge ${selectedHousehold.statusClass}`}>
-                                    {selectedHousehold.status}
-                                </div>
-                            </div>
-                            <div className="recent_event">최근 이벤트: {selectedHousehold.recentEvent}</div>
-                        </div>
-                        <div className="title_right">
-                            {selectedHousehold.status === "즉시 대응 필요" && (
-                                <div className="adjust_btn">대응</div>
-                            )}
-                            <div
-                                className="message_btn"
-                                onClick={() => setIsMessageModalOpen(true)}
-                            >
-                                <div className="icon">
-                                    <img src={Message} alt="Message" />
-                                </div>
-                                <div className="text">메시지</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="household_manage">
-                        <div className="today_event">
-                            <div className="title">오늘 감지</div>
-                            <div className="number">{selectedHousehold.today}</div>
-                        </div>
-                        <div className="high_intensity">
-                            <div className="title">고강도</div>
-                            <div className="number">{selectedHousehold.high}</div>
-                        </div>
-                        <div className="average_duration">
-                            <div className="title">평균 지속</div>
-                            <div className="number">{selectedHousehold.averageDuration}</div>
-                        </div>
-                    </div>
-                    <div className="recent_events">
-                        <div className="event_title">최근 이벤트</div>
-                        <div className="event_lists">
-                            {selectedHousehold.events.map((event, index) => (
-                                <div className="event_item" key={`${event.type}-${index}`}>
-                                    <div className="event_info">
-                                        <div className="info_left">
-                                            <div className={event.iconClass}>
-                                                <img src={event.icon} alt={event.type} />
-                                            </div>
-                                            <div className="info_text">
-                                                <div className="event_type">{event.type}</div>
-                                                <div className="event_from">{event.from}</div>
-                                            </div>
-                                        </div>
-                                        <div className={`info_right_${event.intensityClass}`}>
-                                            {event.intensity}
-                                        </div>
-                                    </div>
-                                    <div className="event_detail">
-                                        <div className="time">
-                                            <div className="icon">
-                                                <img src={Clock} alt="Clock" />
-                                            </div>
-                                            <div className="text">{event.timeRange}</div>
-                                            <div className="duration_time">지속 {event.duration}</div>
-                                        </div>
-                                        <div className="repeat">
-                                            <div className="icon">
-                                                <img src={Notice} alt="Notice" />
-                                            </div>
-                                            <div className="text">반복 {event.repeat}</div>
-                                        </div>
+                {selectedHousehold && (
+                    <div className="household_analysis">
+                        <div className="household_title">
+                            <div className="title_left">
+                                <div className="title">
+                                    <div className="location">{getDashboardHouseholdName(selectedHousehold)}</div>
+                                    <div className={`badge ${getStatusBadgeClass(selectedHousehold.status)}`}>
+                                        {selectedHousehold.status_label ?? "정상"}
                                     </div>
                                 </div>
-                            ))}
+                                <div className="recent_event">
+                                    최근 이벤트: {isSelectedLogsLoading ? "불러오는 중" : getRecentNoiseTimeText()}
+                                </div>
+                            </div>
+                            <div className="title_right">
+                                {selectedHousehold.status === "urgent" && (
+                                    <div
+                                        className="adjust_btn"
+                                        onClick={() => navigate("emergency")}
+                                    >
+                                        대응
+                                    </div>
+                                )}
+                                <div
+                                    className="message_btn"
+                                    onClick={() => setIsMessageModalOpen(true)}
+                                >
+                                    <div className="icon">
+                                        <img src={Message} alt="Message" />
+                                    </div>
+                                    <div className="text">메시지</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div className="household_manage">
+                            <div className="today_event">
+                                <div className="title">오늘 감지</div>
+                                <div className="number">{selectedHousehold.today_count ?? 0}건</div>
+                            </div>
+                            <div className="high_intensity">
+                                <div className="title">고강도</div>
+                                <div className="number">{selectedHousehold.high_count ?? 0}건</div>
+                            </div>
+                            <div className="average_duration">
+                                <div className="title">최근 시간</div>
+                                <div className="number">{getLatestTimeText(selectedHousehold)}</div>
+                            </div>
+                        </div>
+                        <div className="recent_events">
+                            <div className="event_title">최근 이벤트</div>
+                            <div className="event_lists">
+                                {isSelectedLogsLoading && (
+                                    <div className="event_item">
+                                        <div className="event_info">
+                                            <div className="info_left">
+                                                <div className="info_text">
+                                                    <div className="event_type">최근 이벤트를 불러오는 중입니다.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {isSelectedLogsError && (
+                                    <div className="event_item">
+                                        <div className="event_info">
+                                            <div className="info_left">
+                                                <div className="info_text">
+                                                    <div className="event_type">최근 이벤트 조회에 실패했습니다.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {!isSelectedLogsLoading && !isSelectedLogsError && selectedHouseholdLogs.length === 0 && (
+                                    <div className="event_item">
+                                        <div className="event_info">
+                                            <div className="info_left">
+                                                <div className="info_text">
+                                                    <div className="event_type">최근 이벤트 없음</div>
+                                                    <div className="event_from">{getDashboardHouseholdName(selectedHousehold)}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {!isSelectedLogsLoading && !isSelectedLogsError && selectedHouseholdLogs.map((event) => {
+                                    const eventTypeLabel = getEventTypeLabel(event.event_type);
+                                    const severityLabel = getSeverityLabel(event.severity);
+                                    const intensityClass = getEventIntensityClass(event.severity);
 
-                    {isMessageModalOpen && (
-                        <div className="modal_overlay">
-                            <SendMessageModal
-                                receiverHouse={selectedHousehold.house}
-                                receiverName={selectedHousehold.name}
-                                onClose={() => setIsMessageModalOpen(false)}
-                            />
+                                    return (
+                                        <div className="event_item" key={event.id}>
+                                            <div className="event_info">
+                                                <div className="info_left">
+                                                    <div className={getEventIconClass(event.severity)}>
+                                                        <img
+                                                            src={getEventIcon(event.severity)}
+                                                            alt={eventTypeLabel}
+                                                        />
+                                                    </div>
+                                                    <div className="info_text">
+                                                        <div className="event_type">{eventTypeLabel}</div>
+                                                        <div className="event_from">
+                                                            {getDashboardHouseholdName(event)}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={`info_right_${intensityClass}`}>
+                                                    {severityLabel}
+                                                </div>
+                                            </div>
+                                            <div className="event_detail">
+                                                <div className="time">
+                                                    <div className="icon">
+                                                        <img src={Clock} alt="Clock" />
+                                                    </div>
+                                                    <div className="text">{formatEventTime(event.timestamp)}</div>
+                                                    <div className="duration_time">
+                                                        지속 {formatDuration(event.duration_ms)}
+                                                    </div>
+                                                </div>
+                                                <div className="repeat">
+                                                    <div className="icon">
+                                                        <img src={Notice} alt="Notice" />
+                                                    </div>
+                                                    <div className="text">
+                                                        {event.sound_level ?? 0}dB
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    )}
-                </div>
+
+                        {isMessageModalOpen && (
+                            <div className="modal_overlay">
+                                <SendMessageModal
+                                    householdId={selectedHousehold.household_id}
+                                    receiverHouse={getDashboardHouseholdName(selectedHousehold)}
+                                    receiverName={selectedHousehold.resident_name}
+                                    onClose={() => setIsMessageModalOpen(false)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )}
             </main >
         </div >
     )

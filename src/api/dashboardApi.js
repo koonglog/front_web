@@ -1,7 +1,23 @@
 import CustomAxios from "./CustomAxios";
 
-export const getDashboardHouseholds = async () => {
-    const response = await CustomAxios.get("/api/v1/dashboard/households");
+// export const getDashboardHouseholds = async () => {
+//     const response = await CustomAxios.get("/api/v1/dashboard/households");
+//     return response.data;
+// };
+
+export const getDashboardHouseholds = async ({
+    building = null,
+    search = null,
+    status = null,
+} = {}) => {
+    const response = await CustomAxios.get("/api/v1/dashboard/households", {
+        params: {
+            building,
+            search,
+            status,
+        },
+    });
+
     return response.data;
 };
 
@@ -53,7 +69,23 @@ export const getNoiseHotspot = async () => {
     return response.data;
 };
 
-export const getRecentNoiseLogs = async () => {
-    const response = await CustomAxios.get("/api/v1/noise-logs/recent");
+// export const getRecentNoiseLogs = async () => {
+//     const response = await CustomAxios.get("/api/v1/noise-logs/recent");
+//     return response.data;
+// };
+
+export const getRecentNoiseLogs = async ({
+    householdId = null,
+    since = null,
+    limit = 100,
+} = {}) => {
+    const response = await CustomAxios.get("/api/v1/noise-logs/recent", {
+        params: {
+            household_id: householdId,
+            since,
+            limit,
+        },
+    });
+
     return response.data;
 };
