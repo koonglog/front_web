@@ -196,7 +196,7 @@ flowchart TD
     ReactApp --> Router[라우팅]
     Router --> Protected[보호 라우트]
     Protected --> Layout[공통 레이아웃]
-    Layout --> Nav[내비게이션]
+    Layout --> Nav[네비게이션]
     Layout --> Pages[페이지 모듈]
 
     Pages --> AuthPage[로그인 회원가입]
@@ -223,8 +223,8 @@ flowchart TD
 * `React App`: `src/index.js`, `src/App.js`를 중심으로 실행되는 SPA입니다.
 * `라우팅`: `src/App.js`에서 로그인, 회원가입, 대시보드, 공지사항, 중재 검토 등 페이지 경로를 관리합니다.
 * `보호 라우트`: `src/routes/ProtectedRoute.jsx`에서 인증이 필요한 페이지 접근을 제어합니다.
-* `공통 레이아웃`: `src/layouts/RootLayout.jsx`에서 공통 내비게이션과 페이지 출력 구조를 담당합니다.
-* `내비게이션`: `src/components/common/Nav.jsx`에서 주요 관리자 메뉴를 제공합니다.
+* `공통 레이아웃`: `src/layouts/RootLayout.jsx`에서 공통 네비게이션과 페이지 출력 구조를 담당합니다.
+* `네비게이션`: `src/components/common/Nav.jsx`에서 주요 관리자 메뉴를 제공합니다.
 * `페이지 모듈`: `src/pages` 하위의 기능별 디렉터리에서 화면을 분리합니다.
 * `API 모듈`: `src/api` 하위 파일에서 기능별 API 호출을 분리합니다.
 * `CustomAxios`: `src/api/CustomAxios.js`에서 `REACT_APP_BASE_URL` 기반의 Axios 인스턴스를 생성합니다.
@@ -396,7 +396,7 @@ front_web
 
 * `src/api`: 백엔드 API 호출 함수 관리
 * `src/assets`: 이미지, 폰트, SCSS 등 정적 자산 관리
-* `src/components/common`: 내비게이션, 프로필 드롭다운 등 공통 컴포넌트
+* `src/components/common`: 네비게이션, 프로필 드롭다운 등 공통 컴포넌트
 * `src/components/dashboard`: 대시보드 관련 컴포넌트
 * `src/components/notice`: 공지사항 작성 관련 모달 컴포넌트
 * `src/layouts`: 공통 레이아웃 관리
